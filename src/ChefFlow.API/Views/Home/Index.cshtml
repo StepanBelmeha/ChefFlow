@@ -3,4 +3,167 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Welcome to ChefFlow!</h1>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chef Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href = "../../../css/main_page.css" />
+</head>
+<body>
+
+
+<nav>
+  <a href="#" class="logo">Chef<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Можливості</a></li>
+    <li><a href="#workflow">Як це працює</a></li>
+    <li><a href="#">Рецепти</a></li>
+    <li><a href="#">Спільнота</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="#" class="btn-ghost">Увійти</a>
+    <a href="#" class="btn-primary">Почати</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="/images/hero_image.jpg" alt="" class="hero-bg-img"/>
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Платформа для кухарів</p>
+    <h1 class="hero-title">
+      Твоя кухня.<br>
+      <em>Твій потік.</em>
+    </h1>
+    <p class="hero-subtitle">
+      Chef Flow — інструмент для тих, хто готує з пристрастю. Зберігай рецепти,
+      масштабуй інгредієнти, плануй задачі та діліться своїми стравами з командою.
+    </p>
+    <div class="hero-cta">
+      <a href="#" class="btn-primary">Спробувати безкоштовно</a>
+      <a href="#features" class="btn-ghost">Дізнатись більше</a>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-item">
+        <div class="stat-num">2.4k</div>
+        <div class="stat-label">Рецептів</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">340</div>
+        <div class="stat-label">Кухарів</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Задоволені</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-header">
+    <span class="section-label">Можливості</span>
+    <h2 class="section-title">Все що потрібно кухарю</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-num">01</div>
+      <div class="feature-icon">📋</div>
+      <div class="feature-name">Управління рецептами</div>
+      <div class="feature-desc">Створюй, редагуй та організовуй рецепти з описом, медіа та нотатками. Зберігай як чернетку або публікуй.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">02</div>
+      <div class="feature-icon">⚖️</div>
+      <div class="feature-name">Калькулятор порцій</div>
+      <div class="feature-desc">Автоматичний перерахунок інгредієнтів для будь-якої кількості порцій або зміни форми випічки.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">03</div>
+      <div class="feature-icon">📅</div>
+      <div class="feature-name">Планувальник задач</div>
+      <div class="feature-desc">Встановлюй пріоритети, дедлайни та нагадування. Контролюй робочий процес на кухні.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">04</div>
+      <div class="feature-icon">🌐</div>
+      <div class="feature-name">Спільнота кухарів</div>
+      <div class="feature-desc">Переглядай рецепти інших, ставь вподобайки, зберігай в обране та спілкуйся з авторами.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">06</div>
+      <div class="feature-icon">🎬</div>
+      <div class="feature-name">Медіа-інструкції</div>
+      <div class="feature-desc">Додавай фото та відео до кожного кроку рецепту. Наочні інструкції для бездоганного результату.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="workflow" id="workflow">
+  <div class="section-header">
+    <span class="section-label">Процес</span>
+    <h2 class="section-title">Як це працює</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-arrow">→ 01</div>
+      <div class="step-num">01</div>
+      <div class="step-title">Реєстрація</div>
+      <div class="step-desc">Створи акаунт за кілька секунд. Заповни профіль та налаштуй робочий простір під себе.</div>
+    </div>
+    <div class="step">
+      <div class="step-arrow">→ 02</div>
+      <div class="step-num">02</div>
+      <div class="step-title">Додай рецепт</div>
+      <div class="step-desc">Введи назву, інгредієнти та кроки. Прикріпи фото або відео. Зберігай або публікуй.</div>
+    </div>
+    <div class="step">
+      <div class="step-arrow">→ 03</div>
+      <div class="step-num">03</div>
+      <div class="step-title">Плануй роботу</div>
+      <div class="step-desc">Розстав задачі за пріоритетами. Використовуй калькулятор для масштабування страв.</div>
+    </div>
+    <div class="step">
+      <div class="step-arrow">→ 04</div>
+      <div class="step-num">04</div>
+      <div class="step-title">Діліться результатом</div>
+      <div class="step-desc">Публікуй страви, збирай відгуки та нарощуй своє кулінарне портфоліо в спільноті.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-text">
+    <h2 class="cta-title">Готовий змінити<br>підхід до кухні?</h2>
+    <p class="cta-sub">Приєднуйся до спільноти кухарів, які вже використовують Chef Flow<br>щодня для організації своєї роботи.</p>
+  </div>
+  <div class="cta-actions">
+    <a href="#" class="btn-primary">Зареєструватись</a>
+    <a href="#" class="btn-ghost">Увійти</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Chef<span>Flow</span></div>
+  <div class="footer-links">
+    <a href="#">Про нас</a>
+    <a href="#">Конфіденційність</a>
+    <a href="#">Умови</a>
+    <a href="#">Підтримка</a>
+  </div>
+  <div class="footer-copy">© 2026 ChefFlow. Бельмега Степан.</div>
+</footer>
+
+</body>
+</html>
