@@ -7,7 +7,7 @@ namespace ChefFlow.API.Models
         public required string Email { get; set; }
         public required string Password { get; set; }
         public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
-        public ICollection<Task> Tasks { get; set; } = new List<Task>();
+        public ICollection<UserTask> Tasks { get; set; } = new List<UserTask>();
         public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
     }
 }

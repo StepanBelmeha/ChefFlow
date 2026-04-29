@@ -4,24 +4,22 @@ namespace ChefFlow.API.Controllers
     using ChefFlow.API.DTO;
     using ChefFlow.API.Models;
     using Microsoft.AspNetCore.Mvc;
+
     [ApiController]
     [Route("api/[controller]")]
-    public class Usercontroller : ControllerBase
+    public class Usercontroller(AppDbContext context) : ControllerBase
     {
+        private readonly AppDbContext _context = context;
 
-        private readonly AppDbContext _context;
-        public Usercontroller(AppDbContext context)
-        {
-            _context = context;
-        }
         [HttpGet]
         public IActionResult GetAll()
         {
-            var users =  _context
+            var users = _context
                 .Users
                 .ToList();
             return Ok(users);
         }
+
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
@@ -32,8 +30,9 @@ namespace ChefFlow.API.Controllers
             }
             return Ok(user);
         }
+
         [HttpPost]
-        public IActionResult Createuser(AdduserDto userDto)
+        public IActionResult Createuser(AddUserDto userDto)
         {
             var user = new User
             {
@@ -45,9 +44,10 @@ namespace ChefFlow.API.Controllers
             _context.SaveChanges();
             return Ok(user);
         }
+
         [HttpPut]
         [Route("{id}")]
-        public IActionResult UpdateUser(int id, AdduserDto userDto)
+        public IActionResult UpdateUser(int id, AddUserDto userDto)
         {
             var user = _context.Users.Find(id);
             if (user == null)
@@ -56,10 +56,10 @@ namespace ChefFlow.API.Controllers
             }
             user.Name = userDto.Name;
             user.Email = userDto.Email;
-            user.Password = userDto.Password;
             _context.SaveChanges();
             return Ok(user);
         }
+    
         [HttpDelete]
         [Route("{id}")]
         public IActionResult DeleteUser(int id)
