@@ -1,7 +1,7 @@
 using ChefFlow.API.Models;
 namespace ChefFlow.API.DTO
 {
-    public class AddUserDto
+    public class CreateUserDto
     {
         public required string Name { get; set; }
         public required string Email { get; set; }
