@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "Кабінет";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Кабінет — ChefFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/cabinet.css"/>
+</head>
+<body>
+
+<nav>
+  <a href="/Home/Index" class="logo">Chef<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/Recipes/Index">Рецепти</a></li>
+    <li><a href="/Favorites/Index">Обране</a></li>
+    <li><a href="/Tasks/Index">Завдання</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="/Auth/Index" class="btn-ghost">Вийти</a>
+  </div>
+</nav>
+
+<div class="cabinet-wrapper">
+
+  <!-- ПРОФІЛЬ -->
+  <div class="cabinet-header">
+    <div class="cabinet-avatar">👨‍🍳</div>
+    <div class="cabinet-info">
+      <h1 class="cabinet-name">Привіт, <em id="user-name">Кухарю</em>!</h1>
+      <p class="cabinet-email" id="user-email">your@email.com</p>
+    </div>
+  </div>
+
+  <!-- НАВІГАЦІЙНІ КАРТКИ -->
+  <div class="cabinet-grid">
+
+    <a href="/Recipes/Index" class="cabinet-card">
+      <div class="card-icon">📖</div>
+      <div class="card-title">Всі рецепти</div>
+      <div class="card-desc">Переглядай рецепти спільноти</div>
+    </a>
+
+    <a href="/Recipes/Create" class="cabinet-card">
+      <div class="card-icon">✍️</div>
+      <div class="card-title">Створити рецепт</div>
+      <div class="card-desc">Додай свій власний рецепт</div>
+    </a>
+
+    <a href="/Favorites/Index" class="cabinet-card">
+      <div class="card-icon">❤️</div>
+      <div class="card-title">Обране</div>
+      <div class="card-desc">Рецепти які ти зберіг</div>
+    </a>
+
+    <a href="/Tasks/Index" class="cabinet-card">
+      <div class="card-icon">📅</div>
+      <div class="card-title">Мої завдання</div>
+      <div class="card-desc">Переглядай свої завдання</div>
+    </a>
+
+    <a href="/Tasks/Create" class="cabinet-card">
+      <div class="card-icon">➕</div>
+      <div class="card-title">Створити завдання</div>
+      <div class="card-desc">Додай нове завдання</div>
+    </a>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Chef<span>Flow</span></div>
+  <div class="footer-copy">© 2026 ChefFlow. Бельмега Степан.</div>
+</footer>
+
+<script src="/js/cabinet.js"></script>
+</body>
+</html>
