@@ -16,11 +16,11 @@ function togglePass(id, btn) {
 // Валідація
 function validateLogin(email, password) {
     if (!email.includes('@')) {
-        alert('Email має містити символ @');
+        ShowError('login-email', 'Email має містити символ @');
         return false;
     }
     if (password.length < 6) {
-        alert('Пароль має бути не менше 6 символів');
+        ShowError('login-pass', 'Пароль має бути не менше 6 символів');
         return false;
     }
     return true;
@@ -28,15 +28,15 @@ function validateLogin(email, password) {
 
 function validateRegister(name, email, password) {
     if (!/^[a-zA-Zа-яА-ЯіІїЇєЄ']+$/.test(name)) {
-        alert('Ім\'я має містити лише букви');
+        ShowError('reg-name', 'Ім\'я має містити лише букви');
         return false;
     }
     if (!email.includes('@')) {
-        alert('Email має містити символ @');
+        ShowError('reg-email', 'Email має містити символ @');
         return false;
     }
     if (password.length < 6) {
-        alert('Пароль має бути не менше 6 символів');
+        ShowError('reg-pass', 'Пароль має бути не менше 6 символів');
         return false;
     }
     return true;
@@ -58,9 +58,11 @@ document.querySelector('#panel-login .form-submit').addEventListener('click', as
     if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
+        localStorage.setItem('userName', data.name);
+        localStorage.setItem('userEmail', data.email);
         window.location.href = '/Cabinet/Index';
     } else {
-        alert('Невірний email або пароль');
+        ShowError('login-general-error', 'Невірний email або пароль');
     }
 });
 
@@ -82,6 +84,29 @@ document.querySelector('#panel-register .form-submit').addEventListener('click',
       window.location.href = '/Cabinet/Index';
     } else {
         const error = await response.text();
-        alert(error);
+        ShowError('reg-general-error', error);
     }
+});
+function ShowError(id, message) {
+    const element = document.getElementById(id);
+    if (element.tagName === 'INPUT') {
+        if (!element.dataset.originalPlaceholder) {
+            element.dataset.originalPlaceholder = element.placeholder;
+        }
+        element.placeholder = message;
+        element.classList.add('error');
+        element.value = '';
+    } else {
+        element.textContent = message;
+    }
+}
+
+// Clear errors on input
+document.querySelectorAll('.form-input').forEach(input => {
+    input.addEventListener('input', () => {
+        if (input.classList.contains('error')) {
+            input.classList.remove('error');
+            input.placeholder = input.dataset.originalPlaceholder || '';
+        }
+    });
 });

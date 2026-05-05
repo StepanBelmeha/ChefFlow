@@ -304,6 +304,7 @@ nav {
   appearance: none;
 }
 .form-input::placeholder { color: var(--border); }
+.form-input.error::placeholder { color: rgba(231, 76, 60, 0.6); }
 .form-input:hover { border-color: var(--muted); }
 .form-input:focus {
   border-color: var(--accent);
@@ -459,6 +460,19 @@ footer {
   transition: color 0.2s;
 }
 .footer-links a:hover { color: var(--text); }
+.form-error {
+    color: #E74C3C;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    margin-top: 6px;
+    min-height: 16px;
+}
+
+.form-input.error {
+    border-color: #E74C3C;
+    background-color: #FDEDEC;
+    color: #E74C3C;
+}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
