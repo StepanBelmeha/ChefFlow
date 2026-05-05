@@ -29,7 +29,13 @@ namespace ChefFlow.API.Controllers
                 return Unauthorized("Невірний email або пароль.");
 
             var token = _jwtService.GenerateToken(user.Id, user.Email);
-            return Ok(new { Token = token });
+            return Ok(new
+            {
+                Token = token,
+                Name = user.Name,
+                Email = user.Email
+
+            });
         }
 
         [HttpPost("register")]
