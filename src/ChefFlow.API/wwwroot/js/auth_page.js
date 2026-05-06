@@ -81,7 +81,7 @@ document.querySelector('#panel-register .form-submit').addEventListener('click',
     });
 
     if (response.ok) {
-      window.location.href = '/Cabinet/Index';
+        switchPanel('login');
     } else {
         const error = await response.text();
         ShowError('reg-general-error', error);

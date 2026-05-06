@@ -39,7 +39,7 @@ namespace ChefFlow.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] CreateUserDto request)
+        public async Task<IActionResult> Register([FromBody] CreateUserDTO request)
         {
             var exists = await _context.Users
                 .AnyAsync(u => u.Email == request.Email);

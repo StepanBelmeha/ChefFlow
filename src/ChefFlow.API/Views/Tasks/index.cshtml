@@ -1,0 +1,155 @@
+
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Завдання — ChefFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="~/css/tasks.css"/>
+</head>
+<body>
+
+<nav>
+  <a href="/Home/Index" class="logo">Chef<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/Recipes/Index">Рецепти</a></li>
+    <li><a href="/Favorites/Index">Обране</a></li>
+    <li><a href="/Tasks/Index" class="active">Завдання</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="/Cabinet/Index" class="btn-ghost">👤 User</a>
+  </div>
+</nav>
+
+<main class="tasks-wrapper">
+
+  <div class="tasks-page-header">
+    <h1 class="tasks-title">Ваші завдання</h1>
+  </div>
+
+  <div class="tasks-divider"></div>
+
+  <div class="tasks-toolbar">
+    <button class="btn-primary" id="add-task-btn">+ Додати</button>
+    <input type="text" class="search-input" placeholder="Пошук..."/>
+  </div>
+
+  <section class="tasks-list">
+
+    <!-- Тестова картка 1 -->
+    <article class="task-card">
+      <div class="task-card-header">
+        <h3 class="task-title">Виконати завдання</h3>
+        <div class="task-actions">
+          <button class="task-btn">✏️</button>
+          <button class="task-btn delete">🗑️</button>
+        </div>
+      </div>
+      <p class="task-desc">Lorem Ipsum - це текст-"риба", що використовується в друкарстві та дизайні.</p>
+      <div class="task-footer">
+        <span class="task-date">📅 10.05.2026</span>
+        <span class="task-priority high">🔴 Високий</span>
+      </div>
+    </article>
+
+    <!-- Тестова картка 2 -->
+    <article class="task-card">
+      <div class="task-card-header">
+        <h3 class="task-title">Приготувати меню</h3>
+        <div class="task-actions">
+          <button class="task-btn">✏️</button>
+          <button class="task-btn delete">🗑️</button>
+        </div>
+      </div>
+      <p class="task-desc">Скласти меню на наступний тиждень для ресторану.</p>
+      <div class="task-footer">
+        <span class="task-date">📅 15.05.2026</span>
+        <span class="task-priority medium">🟡 Середній</span>
+      </div>
+    </article>
+
+    <!-- Тестова картка 3 -->
+    <article class="task-card">
+      <div class="task-card-header">
+        <h3 class="task-title">Замовити продукти</h3>
+        <div class="task-actions">
+          <button class="task-btn">✏️</button>
+          <button class="task-btn delete">🗑️</button>
+        </div>
+      </div>
+      <p class="task-desc">Зробити замовлення свіжих продуктів у постачальника.</p>
+      <div class="task-footer">
+        <span class="task-date">📅 12.05.2026</span>
+        <span class="task-priority low">🟢 Низький</span>
+      </div>
+    </article>
+
+  </section>
+
+</main>
+
+<!-- МОДАЛЬНЕ ВІКНО -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 class="modal-title">Нове завдання</h2>
+
+    <div class="form-group">
+      <label class="form-label">Назва</label>
+      <input type="text" class="form-input" placeholder="Назва завдання"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Опис</label>
+      <textarea class="form-input form-textarea" placeholder="Опис завдання"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Дедлайн</label>
+        <input type="date" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пріоритет</label>
+        <select class="form-input">
+          <option>🟢 Низький</option>
+          <option>🟡 Середній</option>
+          <option>🔴 Високий</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" id="modal-cancel">Скасувати</button>
+      <button class="btn-primary">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Chef<span>Flow</span></div>
+  <div class="footer-links">
+    <a href="#">Про нас</a>
+    <a href="#">Конфіденційність</a>
+    <a href="#">Умови</a>
+    <a href="#">Підтримка</a>
+  </div>
+  <div class="footer-copy">© 2026 ChefFlow. Бельмега Степан.</div>
+</footer>
+
+<script>
+  document.getElementById('add-task-btn').addEventListener('click', () => {
+    document.getElementById('modal-overlay').classList.add('active');
+  });
+
+  document.getElementById('modal-cancel').addEventListener('click', () => {
+    document.getElementById('modal-overlay').classList.remove('active');
+  });
+
+  document.getElementById('modal-overlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modal-overlay')) {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+  });
+</script>
+
+</body>

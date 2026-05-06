@@ -27,5 +27,5 @@ if (token && userName) {
     }
 }
 
-// Зберігати останню сторінку
+
 localStorage.setItem('lastPage', window.location.href);

@@ -32,7 +32,7 @@ namespace ChefFlow.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Createuser(CreateUserDto userDto)
+        public IActionResult Createuser(CreateUserDTO userDto)
         {
             var user = new User
             {
@@ -47,7 +47,7 @@ namespace ChefFlow.API.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public IActionResult UpdateUser(int id, CreateUserDto userDto)
+        public IActionResult UpdateUser(int id, CreateUserDTO userDto)
         {
             var user = _context.Users.Find(id);
             if (user == null)
