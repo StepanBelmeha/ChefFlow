@@ -216,6 +216,11 @@ nav {
 .task-date {
   font-size: 11px;
   color: var(--muted);
+  line-height: 18px;
+}
+
+.task-date img {
+  vertical-align: middle;
 }
 
 .task-priority {
