@@ -95,25 +95,25 @@
 
     <div class="form-group">
       <label class="form-label">Назва</label>
-      <input type="text" class="form-input" placeholder="Назва завдання"/>
+      <input type="text" class="form-input"  id="task-title" placeholder="Назва завдання"/>
     </div>
 
     <div class="form-group">
       <label class="form-label">Опис</label>
-      <textarea class="form-input form-textarea" placeholder="Опис завдання"></textarea>
+      <textarea class="form-input form-textarea" id="task-desc" placeholder="Опис завдання"></textarea>
     </div>
 
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Дедлайн</label>
-        <input type="date" class="form-input"/>
+        <input type="date" class="form-input" id="task-deadline"/>
       </div>
       <div class="form-group">
         <label class="form-label">Пріоритет</label>
-        <select class="form-input">
-          <option>🟢 Низький</option>
-          <option>🟡 Середній</option>
-          <option>🔴 Високий</option>
+        <select class="form-input" id="task-priority">
+          <option>Низький</option>
+          <option>Середній</option>
+          <option>Високий</option>
         </select>
       </div>
     </div>
@@ -136,20 +136,7 @@
   <div class="footer-copy">© 2026 ChefFlow. Бельмега Степан.</div>
 </footer>
 
-<script>
-  document.getElementById('add-task-btn').addEventListener('click', () => {
-    document.getElementById('modal-overlay').classList.add('active');
-  });
+<script src="/js/tasks.js"></script>
 
-  document.getElementById('modal-cancel').addEventListener('click', () => {
-    document.getElementById('modal-overlay').classList.remove('active');
-  });
-
-  document.getElementById('modal-overlay').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('modal-overlay')) {
-      document.getElementById('modal-overlay').classList.remove('active');
-    }
-  });
-</script>
 
 </body>
