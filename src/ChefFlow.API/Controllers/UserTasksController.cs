@@ -13,10 +13,11 @@ namespace ChefFlow.API.Controllers
         private readonly AppDbContext _context = context;
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] int userId)
         {
             var tasks = _context
                 .Tasks
+                .Where(t => t.UserId == userId)
                 .ToList();
             return Ok(tasks);
         }
@@ -64,6 +65,7 @@ namespace ChefFlow.API.Controllers
             _context.SaveChanges();
             return Ok(task);
         }
+
         [HttpDelete]
         [Route("{id}")]
         public IActionResult DeleteTask(int id)
@@ -77,5 +79,27 @@ namespace ChefFlow.API.Controllers
             _context.SaveChanges();
             return Ok();
         }
+
+        [HttpGet("search")]
+        public IActionResult Search([FromQuery] int userId, [FromQuery] string q)
+{
+        if (string.IsNullOrWhiteSpace(q))
+        {
+            var all = _context.Tasks
+                .Where(t => t.UserId == userId)
+                .ToList();
+             return Ok(all);
+        }
+
+        var lower = q.ToLower();
+
+        var tasks = _context.Tasks
+            .Where(t => t.UserId == userId &&
+               (t.Title.ToLower().Contains(lower) ||
+                t.Description.ToLower().Contains(lower)))
+            .ToList();
+
+        return Ok(tasks);
+}
     }
 }

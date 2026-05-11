@@ -220,3 +220,29 @@ document.getElementById('edit-modal-save').addEventListener('click', async () =>
         alert('Помилка при збереженні змін');
     }
 });
+
+let lastSearchQuery = '';
+
+document.querySelector('.search-input').addEventListener('input', async (e) => {
+    const q = e.target.value.trim();
+    const userId = getUserIdFromToken();
+    if (!userId) return;
+
+    if (q === '') {
+        lastSearchQuery = '';
+        await loadTasks();
+        return;
+    }
+
+    lastSearchQuery = q;
+    const response = await fetch(`/api/UserTasks/search?userId=${userId}&q=${encodeURIComponent(q)}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (response.ok) {
+        const tasks = await response.json();
+        if (q === lastSearchQuery) {
+            renderTasks(tasks);
+        }
+    }
+});
