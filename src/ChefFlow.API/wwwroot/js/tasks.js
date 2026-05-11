@@ -12,6 +12,7 @@ document.getElementById('add-task-btn').addEventListener('click', () => {
     document.getElementById('modal-overlay').classList.add('active');
 });
 
+
 // Закрити модальне вікно
 document.getElementById('modal-cancel').addEventListener('click', () => {
     document.getElementById('modal-overlay').classList.remove('active');
@@ -94,12 +95,12 @@ function renderTasks(tasks) {
 
 function createTaskCard(task) {
     const priorityMap = {
-        'Низький':  { cls: 'low',    icon: '🟢' },
-        'Середній': { cls: 'medium', icon: '🟡' },
-        'Високий':  { cls: 'high',   icon: '🔴' },
+        'Низький':  { cls: 'low' },
+        'Середній': { cls: 'medium' },
+        'Високий':  { cls: 'high'},
     };
 
-    const p = priorityMap[task.priority] ?? { cls: 'low', icon: '🟢' };
+    const p = priorityMap[task.priority] ?? { cls: 'low' };
 
     const deadline = task.deadline
         ? new Date(task.deadline).toLocaleDateString('uk-UA')
@@ -132,8 +133,11 @@ function createTaskCard(task) {
 
     // Видалення
     article.querySelector('.btn-delete').addEventListener('click', () => deleteTask(task.id));
-
+    // Редагування
+    article.querySelector('.btn-edit').addEventListener('click', () => openEditModal(task));
     return article;
+
+   
 }
 
 async function deleteTask(id) {
@@ -156,17 +160,40 @@ function escapeHtml(str) {
     return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-// --- Оновити створення: після успіху перезавантажити список ---
 
 document.querySelector('.modal .btn-primary').addEventListener('click', async () => {
-    // ... твій існуючий код ...
 
     if (response.ok) {
         document.getElementById('modal-overlay').classList.remove('active');
-        await loadTasks(); // ← замість alert, просто оновлюємо список
+        await loadTasks(); 
     } else {
         alert('Помилка при створенні завдання');
     }
 });
 
-// --- Старт ---
+function openEditModal(task) {
+    document.getElementById('edit-task-title').value = task.title;
+    document.getElementById('edit-task-desc').value = task.description ?? '';
+    document.getElementById('edit-task-priority').value = task.priority;
+
+    // Дедлайн треба у форматі yyyy-MM-dd для input[type=date]
+    if (task.deadline) {
+        document.getElementById('edit-task-deadline').value =
+            new Date(task.deadline).toISOString().split('T')[0];
+    } else {
+        document.getElementById('edit-task-deadline').value = '';
+    }
+
+    document.getElementById('edit-modal-overlay').classList.add('active');
+}
+
+
+document.getElementById('edit-modal-cancel').addEventListener('click', () => {
+    document.getElementById('edit-modal-overlay').classList.remove('active');
+});
+
+document.getElementById('edit-modal-overlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('edit-modal-overlay')) {
+        document.getElementById('edit-modal-overlay').classList.remove('active');
+    }
+});

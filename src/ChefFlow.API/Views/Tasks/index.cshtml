@@ -68,14 +68,47 @@
         </select>
       </div>
     </div>
-
     <div class="modal-actions">
       <button class="btn-ghost" id="modal-cancel">Скасувати</button>
       <button class="btn-primary">Зберегти</button>
     </div>
   </div>
 </div>
+<div class="modal-overlay" id="edit-modal-overlay">
+  <div class="modal">
+    <h2 class="modal-title">Редагувати завдання</h2>
 
+    <div class="form-group">
+      <label class="form-label">Назва</label>
+      <input type="text" class="form-input" id="edit-task-title" placeholder="Назва завдання"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Опис</label>
+      <textarea class="form-input form-textarea" id="edit-task-desc" placeholder="Опис завдання"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Дедлайн</label>
+        <input type="date" class="form-input" id="edit-task-deadline"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пріоритет</label>
+        <select class="form-input" id="edit-task-priority">
+          <option>Низький</option>
+          <option>Середній</option>
+          <option>Високий</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" id="edit-modal-cancel">Скасувати</button>
+      <button class="btn-primary" id="edit-modal-save">Зберегти</button>
+    </div>
+  </div>
+</div>
 <footer>
   <div class="footer-logo">Chef<span>Flow</span></div>
   <div class="footer-links">
