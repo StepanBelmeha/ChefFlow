@@ -197,3 +197,26 @@ document.getElementById('edit-modal-overlay').addEventListener('click', (e) => {
         document.getElementById('edit-modal-overlay').classList.remove('active');
     }
 });
+document.getElementById('edit-modal-save').addEventListener('click', async () => {
+    const title = document.getElementById('edit-task-title').value;
+    const description = document.getElementById('edit-task-desc').value;
+    const deadline = document.getElementById('edit-task-deadline').value;
+    const priority = document.getElementById('edit-task-priority').value;
+    const response = await fetch(`/api/UserTasks/${document.querySelector('.task-card[data-id]').dataset.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({  
+            title,
+            description,
+            deadline: deadline || new Date().toISOString(),
+            priority})
+    });
+    if (response.ok) {        document.getElementById('edit-modal-overlay').classList.remove('active');
+        await loadTasks(); 
+    } else {
+        alert('Помилка при збереженні змін');
+    }
+});

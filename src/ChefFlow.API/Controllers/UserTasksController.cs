@@ -57,6 +57,8 @@ namespace ChefFlow.API.Controllers
             {
                 return NotFound();
             }
+            task.Title = taskDto.Title;
+            task.Description = taskDto.Description;
             task.Deadline = taskDto.Deadline;
             task.Priority = taskDto.Priority;
             _context.SaveChanges();
