@@ -1,0 +1,420 @@
+/* ── CSS VARIABLES (shared with project) ── */
+:root {
+  --bg: #F9F7F2;
+  --surface: #FFFFFF;
+  --text: #2D2A26;
+  --muted: #7A7267;
+  --accent: #D35400;
+  --accent-soft: #FDF2E9;
+  --border: #E8E2D6;
+  --white: #FFFFFF;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(28, 26, 22, 0.05);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  background: rgba(247,244,239,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo span { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--text); }
+
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  background-color: var(--accent);
+  color: var(--white);
+  border: 1px solid var(--accent);
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-weight: 500;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+.btn-primary:hover {
+  background-color: #A04015;
+  border-color: #A04015;
+  box-shadow: 0 4px 12px rgba(200, 80, 26, 0.2);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-weight: 500;
+  text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+.btn-ghost:hover {
+  background-color: var(--surface);
+  border-color: var(--muted);
+  color: var(--accent);
+}
+
+/* ── MAIN WRAPPER ── */
+.recipe-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 120px 48px 80px;
+}
+
+/* ── HEADER ── */
+.recipe-page-header {
+  margin-bottom: 24px;
+}
+.recipe-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.recipe-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 32px 0;
+}
+
+/* ── FORM SECTIONS ── */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-section.two-col {
+  flex-direction: row;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group.full-width { width: 100%; }
+
+.form-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.form-input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.form-input:focus { border-color: var(--accent); }
+
+.form-textarea.short {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+.form-row .form-group { flex: 1; }
+
+/* ── INGREDIENTS ── */
+.ingredients-col { flex: 1; min-width: 0; }
+
+.col-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+.ingredients-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  min-height: 60px;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 10px 18px;
+  font-size: 12px;
+  gap: 12px;
+}
+
+.ingredient-name { flex: 1; }
+.ingredient-qty {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.ingredient-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 0 4px;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.ingredient-remove:hover { color: var(--accent); }
+
+.btn-add-ingredient {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+.btn-add-ingredient:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── MEDIA UPLOAD ── */
+.media-col { flex: 1.2; min-width: 0; }
+
+.media-upload {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.media-upload:hover { border-color: var(--accent); }
+
+.media-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 32px;
+}
+.media-icon { font-size: 28px; opacity: 0.4; }
+.media-hint {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.media-sub {
+  font-size: 10px;
+  color: var(--border);
+}
+
+.media-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+/* ── RICH TEXT EDITOR ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.toolbar button {
+  background: none;
+  border: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.toolbar button:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.rich-editor {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 20px;
+  min-height: 280px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  line-height: 2;
+  color: var(--text);
+  outline: none;
+}
+.rich-editor:focus { border-color: var(--accent); }
+
+/* ── SUBMIT ── */
+.form-submit {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 42, 38, 0.4);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 36px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 300;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+.footer-logo span { color: var(--accent); }
+.footer-copy { font-size: 10px; color: var(--muted); letter-spacing: 0.05em; }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--text); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  .recipe-wrapper { padding: 100px 24px 60px; }
+  .form-section.two-col { flex-direction: column; }
+  footer { padding: 32px 24px; flex-direction: column; gap: 20px; text-align: center; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+}

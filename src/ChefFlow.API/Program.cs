@@ -1,14 +1,21 @@
+using System.Text;
 using ChefFlow.API.Data;
 using ChefFlow.API.Models;
 using ChefFlow.API.Services;
-using Microsoft.EntityFrameworkCore;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
+builder.Services.AddProblemDetails(configure =>
+{
+configure.CustomizeProblemDetails = context =>
+{
+context.ProblemDetails.Extensions.TryAdd("traceid", context.HttpContext.TraceIdentifier);
+};
+});
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -46,9 +53,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAuthorization();
+app.UseExceptionHandler();
+//app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+

@@ -1,0 +1,160 @@
+
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Додати рецепт — ChefFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="~/css/add_recipe.css"/>
+</head>
+<body>
+
+<nav>
+  <a href="/Home/Index" class="logo">Chef<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/Recipes/Index" class="active">Рецепти</a></li>
+    <li><a href="/Favorites/Index">Обране</a></li>
+    <li><a href="/Tasks/Index">Завдання</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="/Cabinet/Index" class="btn-ghost">👤 User</a>
+  </div>
+</nav>
+
+<main class="recipe-wrapper">
+
+  <div class="recipe-page-header">
+    <h1 class="recipe-title">Додати рецепт</h1>
+  </div>
+
+  <div class="recipe-divider"></div>
+
+  <form class="recipe-form" id="recipe-form">
+
+    <!-- Назва та опис -->
+    <section class="form-section">
+      <div class="form-group full-width">
+        <label class="form-label">Назва рецепту</label>
+        <input type="text" class="form-input" id="recipe-name" placeholder="Наприклад: Борщ українській класичний"/>
+      </div>
+
+      <div class="form-group full-width">
+        <label class="form-label">Короткий опис</label>
+        <textarea class="form-input form-textarea short" id="recipe-short-desc" placeholder="Кілька речень про страву..."></textarea>
+      </div>
+    </section>
+
+    <div class="recipe-divider"></div>
+
+    <!-- Інгредієнти + Фото -->
+    <section class="form-section two-col">
+
+      <!-- Ліва колонка: інгредієнти -->
+      <div class="ingredients-col">
+        <h2 class="col-title">Інгредієнти</h2>
+
+        <ul class="ingredients-list" id="ingredients-list">
+          <!-- Інгредієнти додаються динамічно -->
+        </ul>
+
+        <button type="button" class="btn-add-ingredient" id="add-ingredient-btn">+ Додати інгредієнт</button>
+      </div>
+
+      <!-- Права колонка: фото/відео -->
+      <div class="media-col">
+        <div class="media-upload" id="media-upload">
+          <input type="file" id="media-input" accept="image/*,video/*" hidden/>
+          <div class="media-placeholder" id="media-placeholder">
+            <span class="media-icon">📷</span>
+            <span class="media-hint">ДОДАТИ ФОТО / ВІДЕО</span>
+            <span class="media-sub">Клікніть або перетягніть файл</span>
+          </div>
+          <img id="media-preview" class="media-preview" src="" alt="" style="display:none"/>
+        </div>
+      </div>
+
+    </section>
+
+    <div class="recipe-divider"></div>
+
+    <!-- Покроковий опис -->
+    <section class="form-section">
+      <div class="form-group full-width">
+        <label class="form-label">Покроковий опис приготування</label>
+        <div class="toolbar" id="editor-toolbar">
+          <button type="button" data-cmd="bold"><b>B</b></button>
+          <button type="button" data-cmd="italic"><i>I</i></button>
+          <button type="button" data-cmd="underline"><u>U</u></button>
+          <span class="toolbar-divider"></span>
+          <button type="button" data-cmd="justifyLeft">⬅</button>
+          <button type="button" data-cmd="justifyCenter">☰</button>
+          <button type="button" data-cmd="justifyRight">➡</button>
+          <span class="toolbar-divider"></span>
+          <button type="button" data-cmd="insertUnorderedList">• Список</button>
+          <button type="button" data-cmd="insertOrderedList">1. Список</button>
+          <span class="toolbar-divider"></span>
+          <button type="button" id="undo-btn">↩ Скасувати</button>
+          <button type="button" id="redo-btn">↪ Повторити</button>
+        </div>
+        <div class="rich-editor" id="recipe-steps" contenteditable="true"></div>
+      </div>
+    </section>
+
+    <!-- Кнопка публікації -->
+    <div class="form-submit">
+      <button type="button" class="btn-primary" id="publish-btn">Опублікувати</button>
+    </div>
+
+  </form>
+
+</main>
+
+<!-- Модальне вікно інгредієнта -->
+<div class="modal-overlay" id="ingredient-modal">
+  <div class="modal">
+    <h2 class="modal-title">Новий інгредієнт</h2>
+
+    <div class="form-group">
+      <label class="form-label">Назва</label>
+      <input type="text" class="form-input" id="ing-name" placeholder="Наприклад: Борошно"/>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Кількість</label>
+        <input type="number" class="form-input" id="ing-qty" placeholder="10"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Одиниця</label>
+        <select class="form-input" id="ing-unit">
+          <option>шт.</option>
+          <option>г</option>
+          <option>кг</option>
+          <option>мл</option>
+          <option>л</option>
+          <option>ст. л.</option>
+          <option>ч. л.</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" id="ing-cancel">Скасувати</button>
+      <button class="btn-primary" id="ing-save">Додати</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Chef<span>Flow</span></div>
+  <div class="footer-links">
+    <a href="#">Про нас</a>
+    <a href="#">Конфіденційність</a>
+    <a href="#">Умови</a>
+    <a href="#">Підтримка</a>
+  </div>
+  <div class="footer-copy">© 2026 ChefFlow. Бельмега Степан.</div>
+</footer>
+
+<script src="/js/add_recipe.js"></script>
+</body>
