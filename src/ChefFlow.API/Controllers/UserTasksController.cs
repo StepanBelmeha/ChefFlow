@@ -8,9 +8,10 @@ namespace ChefFlow.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
 
-    public class UserTasksController(AppDbContext context) : ControllerBase
+    public class UserTasksController(AppDbContext context, ILogger<UserTasksController> logger) : ControllerBase
     {
         private readonly AppDbContext _context = context;
+        private readonly ILogger _logger = logger;
 
         [HttpGet]
         public IActionResult GetAll([FromQuery] int userId)
@@ -19,6 +20,7 @@ namespace ChefFlow.API.Controllers
                 .Tasks
                 .Where(t => t.UserId == userId)
                 .ToList();
+            _logger.LogInformation("Отримано всі завдання для користувача з ID: {UserId}", userId);
             return Ok(tasks);
         }
 
@@ -28,8 +30,10 @@ namespace ChefFlow.API.Controllers
             var task = _context.Tasks.Find(id);
             if (task == null)
             {
+                _logger.LogWarning("Завдання з ID: {TaskId} не знайдено", id);
                 return NotFound();
             }
+            _logger.LogInformation("Отримано завдання з ID: {TaskId}", id);
             return Ok(task);
         }
 
@@ -46,6 +50,7 @@ namespace ChefFlow.API.Controllers
             };
             _context.Tasks.Add(task);
             _context.SaveChanges();
+            _logger.LogInformation("Створено нове завдання: {TaskId}", task.Id);
             return Ok(task);
         }
 
@@ -56,6 +61,7 @@ namespace ChefFlow.API.Controllers
             var task = _context.Tasks.Find(id);
             if (task == null)
             {
+                _logger.LogWarning("Спроба оновлення неіснуючого завдання з ID: {TaskId}", id);
                 return NotFound();
             }
             task.Title = taskDto.Title;
@@ -63,6 +69,7 @@ namespace ChefFlow.API.Controllers
             task.Deadline = taskDto.Deadline;
             task.Priority = taskDto.Priority;
             _context.SaveChanges();
+            _logger.LogInformation("Оновлено завдання з ID: {TaskId}", task.Id);
             return Ok(task);
         }
 
@@ -73,10 +80,12 @@ namespace ChefFlow.API.Controllers
             var task = _context.Tasks.Find(id);
             if (task == null)
             {
+                _logger.LogWarning("Спроба видалення неіснуючого завдання з ID: {TaskId}", id);
                 return NotFound();
             }
             _context.Tasks.Remove(task);
             _context.SaveChanges();
+            _logger.LogInformation("Видалено завдання з ID: {TaskId}", task.Id);
             return Ok();
         }
 
@@ -98,7 +107,7 @@ namespace ChefFlow.API.Controllers
                (t.Title.ToLower().Contains(lower) ||
                 t.Description.ToLower().Contains(lower)))
             .ToList();
-
+        _logger.LogInformation("Пошук завдань для користувача з ID: {UserId} за запитом: {Query}", userId, q);
         return Ok(tasks);
 }
     }

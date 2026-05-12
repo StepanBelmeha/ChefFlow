@@ -10,7 +10,7 @@ namespace ChefFlow.API.Controllers
     public class Usercontroller(AppDbContext context) : ControllerBase
     {
         private readonly AppDbContext _context = context;
-
+        
         [HttpGet]
         public IActionResult GetAll()
         {

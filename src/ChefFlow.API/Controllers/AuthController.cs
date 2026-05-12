@@ -12,11 +12,13 @@ namespace ChefFlow.API.Controllers
     {
         private readonly AppDbContext _context;
         private readonly JwtService _jwtService;
+        private readonly ILogger _logger;
 
-        public AuthController(AppDbContext context, JwtService jwtService)
+        public AuthController(AppDbContext context, JwtService jwtService, ILogger<AuthController> logger)
         {
             _context = context;
             _jwtService = jwtService;
+            _logger = logger;
         }
 
         [HttpPost("login")]
@@ -26,9 +28,13 @@ namespace ChefFlow.API.Controllers
                 .FirstOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            {
+                _logger.LogWarning("Невдала спроба входу для email: {Email}", request.Email);
                 return Unauthorized("Невірний email або пароль.");
+            }
 
             var token = _jwtService.GenerateToken(user.Id, user.Email);
+            _logger.LogInformation("Користувач з email: {Email} успішно увійшов", request.Email);
             return Ok(new
             {
                 Token = token,
@@ -44,7 +50,11 @@ namespace ChefFlow.API.Controllers
             var exists = await _context.Users
                 .AnyAsync(u => u.Email == request.Email);
 
-            if (exists) return BadRequest("Користувач з таким email вже існує.");
+            if (exists)
+            {
+                _logger.LogWarning("Спроба реєстрації з існуючим email: {Email}", request.Email);
+                return BadRequest("Користувач з таким email вже існує.");
+            }
 
             var user = new ChefFlow.API.Models.User
             {
@@ -55,6 +65,7 @@ namespace ChefFlow.API.Controllers
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+            _logger.LogInformation("Новий користувач зареєстрований: {Email}", request.Email);  
             return Ok(new { Message = "Реєстрація успішна." });
         }
     }
