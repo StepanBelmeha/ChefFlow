@@ -55,6 +55,11 @@ namespace ChefFlow.API.Controllers
                 _logger.LogWarning("Спроба реєстрації з існуючим email: {Email}", request.Email);
                 return BadRequest("Користувач з таким email вже існує.");
             }
+            if(string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
+            {
+                _logger.LogWarning("Спроба реєстрації з ненадійним паролем для email: {Email}", request.Email);
+                return BadRequest("Пароль повинен бути не менше 8 символів.");
+            }
 
             var user = new ChefFlow.API.Models.User
             {

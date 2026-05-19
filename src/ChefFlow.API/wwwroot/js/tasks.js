@@ -1,4 +1,5 @@
 const token = localStorage.getItem('token');
+let editingTaskId = null;
 
 // Отримати userId з токена
 function getUserIdFromToken() {
@@ -161,17 +162,10 @@ function escapeHtml(str) {
 }
 
 
-document.querySelector('.modal .btn-primary').addEventListener('click', async () => {
 
-    if (response.ok) {
-        document.getElementById('modal-overlay').classList.remove('active');
-        await loadTasks(); 
-    } else {
-        alert('Помилка при створенні завдання');
-    }
-});
 
 function openEditModal(task) {
+    editingTaskId = task.id;
     document.getElementById('edit-task-title').value = task.title;
     document.getElementById('edit-task-desc').value = task.description ?? '';
     document.getElementById('edit-task-priority').value = task.priority;
@@ -189,6 +183,7 @@ function openEditModal(task) {
 
 
 document.getElementById('edit-modal-cancel').addEventListener('click', () => {
+    editingTaskId = null;
     document.getElementById('edit-modal-overlay').classList.remove('active');
 });
 
@@ -198,24 +193,33 @@ document.getElementById('edit-modal-overlay').addEventListener('click', (e) => {
     }
 });
 document.getElementById('edit-modal-save').addEventListener('click', async () => {
+    if (!editingTaskId) {
+        alert('Не вибране завдання для редагування');
+        return;
+    }
+
     const title = document.getElementById('edit-task-title').value;
     const description = document.getElementById('edit-task-desc').value;
     const deadline = document.getElementById('edit-task-deadline').value;
     const priority = document.getElementById('edit-task-priority').value;
-    const response = await fetch(`/api/UserTasks/${document.querySelector('.task-card[data-id]').dataset.id}`, {
+    const response = await fetch(`/api/UserTasks/${editingTaskId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({  
+        body: JSON.stringify({
             title,
             description,
             deadline: deadline || new Date().toISOString(),
-            priority})
+            priority
+        })
     });
-    if (response.ok) {        document.getElementById('edit-modal-overlay').classList.remove('active');
-        await loadTasks(); 
+
+    if (response.ok) {
+        editingTaskId = null;
+        document.getElementById('edit-modal-overlay').classList.remove('active');
+        await loadTasks();
     } else {
         alert('Помилка при збереженні змін');
     }

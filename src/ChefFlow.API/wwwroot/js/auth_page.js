@@ -19,8 +19,8 @@ function validateLogin(email, password) {
         ShowError('login-email', 'Email має містити символ @');
         return false;
     }
-    if (password.length < 6) {
-        ShowError('login-pass', 'Пароль має бути не менше 6 символів');
+    if (password.length < 8) {
+        ShowError('login-pass', 'Пароль має бути не менше 8 символів');
         return false;
     }
     return true;
@@ -35,8 +35,8 @@ function validateRegister(name, email, password) {
         ShowError('reg-email', 'Email має містити символ @');
         return false;
     }
-    if (password.length < 6) {
-        ShowError('reg-pass', 'Пароль має бути не менше 6 символів');
+    if (password.length < 8) {
+        ShowError('reg-pass', 'Пароль має бути не менше 8 символів');
         return false;
     }
     return true;
