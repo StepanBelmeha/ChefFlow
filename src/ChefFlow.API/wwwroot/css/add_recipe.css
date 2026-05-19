@@ -381,6 +381,40 @@ nav {
   justify-content: flex-end;
   gap: 12px;
 }
+.ingredient-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+
+.ing-name { flex: 1; }
+
+.ing-qty {
+    color: var(--muted);
+    margin: 0 12px;
+}
+
+.ing-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.ing-delete:hover {
+    background: #FDE8E8;
+    color: #C62828;
+}
 
 /* ── FOOTER ── */
 footer {
