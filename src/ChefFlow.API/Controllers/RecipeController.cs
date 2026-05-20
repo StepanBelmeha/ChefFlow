@@ -61,7 +61,7 @@ namespace ChefFlow.API.Controllers
             // Повертай простий об'єкт без циклічних посилань
             return Ok(recipe);
         }
-        
+
         [HttpPost("upload")]
         public async Task<IActionResult> UploadMedia(IFormFile file)
         {
@@ -74,7 +74,7 @@ namespace ChefFlow.API.Controllers
 
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "recipes");
-            
+
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
 
@@ -86,6 +86,49 @@ namespace ChefFlow.API.Controllers
             }
 
             return Ok(new { path = $"/images/recipes/{fileName}" });
+        }
+
+        [HttpGet("user/{userId}")]
+        public IActionResult GetByUserId(int userId)
+        {
+            var recipes = _context.Recipes
+            .Where(r => r.UserId == userId)
+            .ToList();
+            if (recipes == null)
+            {
+                return NotFound();
+            }
+            return Ok(recipes);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var recipe = _context.Recipes.Find(id);
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+            return Ok(recipe);
+        }
+
+        [HttpGet("{id}/ingredients")]
+        public IActionResult GetIngredients(int id)
+        {
+            var ingredients = _context.Ingredients
+                .Where(i => i.RecipeId == id)
+                .Join(_context.Products,
+                    i => i.ProductId,
+                    p => p.Id,
+                    (i, p) => new
+                    {
+                        ProductName = p.Name,
+                        i.Quantity,
+                        i.Unit
+                    })
+                .ToList();
+
+            return Ok(ingredients);
         }
     }
 }

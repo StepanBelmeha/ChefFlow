@@ -1,0 +1,86 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Рецепти — ChefFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/favorites.css"/>
+</head>
+<body>
+
+<nav>
+  <a href="/Home/Index" class="logo">Chef<span>Flow</span></a>
+  <ul class="nav-links">
+    <li><a href="/Recipes/Index">Рецепти</a></li>
+    <li><a href="/Favorites/Index" class="active">Обране</a></li>
+    <li><a href="/Tasks/Index">Завдання</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="/Cabinet/Index" class="btn-ghost" id="user-btn">👤 User</a>
+  </div>
+</nav>
+
+<main class="recipes-wrapper">
+
+  <div class="recipes-page-header">
+    <h1 class="recipes-title">Рецепти</h1>
+  </div>
+
+  <div class="recipes-divider"></div>
+
+  <div class="recipes-toolbar">
+    <input type="text" class="search-input" id="search-input" placeholder="Пошук..."/>
+  </div>
+
+  <section class="recipes-grid" id="recipes-grid">
+    <!-- картки генеруються через JS -->
+  </section>
+
+</main>
+<!-- МОДАЛЬНЕ ВІКНО РЕЦЕПТУ -->
+<div class="modal-overlay" id="recipe-modal">
+  <div class="recipe-modal">
+    <button class="modal-close" id="modal-close">✕</button>
+
+    <div class="recipe-modal-media">
+      <img id="modal-media" src="" alt=""/>
+      <div class="modal-media-placeholder" id="modal-media-placeholder">🍽️</div>
+    </div>
+
+    <div class="recipe-modal-content">
+      <h2 class="recipe-modal-title" id="modal-title"></h2>
+      <p class="recipe-modal-desc" id="modal-desc"></p>
+
+      <div class="recipe-modal-section">
+        <h3 class="recipe-modal-section-title">Інгредієнти</h3>
+        <ul class="recipe-modal-ingredients" id="modal-ingredients"></ul>
+      </div>
+
+      <div class="recipe-modal-section">
+        <h3 class="recipe-modal-section-title">Рецепт</h3>
+        <div class="recipe-modal-instructions" id="modal-instructions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Chef<span>Flow</span></div>
+  <div class="footer-links">
+    <a href="#">Про нас</a>
+    <a href="#">Конфіденційність</a>
+    <a href="#">Умови</a>
+    <a href="#">Підтримка</a>
+  </div>
+  <div class="footer-copy">© 2026 ChefFlow. Бельмега Степан.</div>
+</footer>
+
+<script src="/js/auth-guard.js"></script>
+<script src="/js/favorites.js"></script>
+</body>
+</html>
