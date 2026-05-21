@@ -53,7 +53,7 @@ namespace ChefFlow.API.Controllers
             if (exists)
             {
                 _logger.LogWarning("Спроба реєстрації з існуючим email: {Email}", request.Email);
-                return BadRequest("Користувач з таким email вже існує.");
+                return Conflict("Користувач з таким email вже існує.");
             }
             if(string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
             {

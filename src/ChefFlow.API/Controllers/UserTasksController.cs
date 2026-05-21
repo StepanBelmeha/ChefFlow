@@ -51,7 +51,7 @@ namespace ChefFlow.API.Controllers
             _context.Tasks.Add(task);
             _context.SaveChanges();
             _logger.LogInformation("Створено нове завдання: {TaskId}", task.Id);
-            return Ok(task);
+            return Created($"/api/usertasks/{task.Id}", task);
         }
 
         [HttpPut]
@@ -86,7 +86,7 @@ namespace ChefFlow.API.Controllers
             _context.Tasks.Remove(task);
             _context.SaveChanges();
             _logger.LogInformation("Видалено завдання з ID: {TaskId}", task.Id);
-            return Ok();
+            return NoContent();
         }
 
         [HttpGet("search")]

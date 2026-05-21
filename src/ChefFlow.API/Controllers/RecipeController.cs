@@ -55,11 +55,9 @@ namespace ChefFlow.API.Controllers
                     Unit = ing.Unit
                 });
             }
-
+    
             _context.SaveChanges();
-
-            // Повертай простий об'єкт без циклічних посилань
-            return Ok(recipe);
+            return Created($"/api/recipe/{recipe.Id}", recipe);
         }
 
         [HttpPost("upload")]
