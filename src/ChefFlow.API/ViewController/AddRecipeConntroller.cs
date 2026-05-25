@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChefFlow.API.Controllers
 {
-    public class CabinetController : Controller
+    public class AddRecipeController : Controller
     {
         public IActionResult Index()
         {

@@ -1,0 +1,328 @@
+:root {
+  --bg: #F9F7F2;
+  --surface: #FFFFFF;
+  --text: #2D2A26;
+  --muted: #7A7267;
+  --accent: #D35400;
+  --accent-soft: #FDF2E9;
+  --border: #E8E2D6;
+  --white: #FFFFFF;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(28, 26, 22, 0.05);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  background: rgba(247,244,239,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--accent); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 10px 24px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+/* MAIN */
+.recipes-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 120px 40px 80px;
+}
+
+.recipes-page-header { margin-bottom: 32px; }
+
+.recipes-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px;
+  font-weight: 300;
+}
+
+.recipes-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 32px;
+}
+
+/* TOOLBAR */
+.recipes-toolbar {
+  margin-bottom: 40px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 24px;
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  background: var(--white);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--accent); }
+
+/* GRID */
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* RECIPE CARD */
+.recipe-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  text-decoration: none;
+  color: var(--text);
+  display: block;
+}
+.recipe-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+
+.recipe-card-media {
+  width: 100%;
+  height: 200px;
+  background: var(--border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recipe-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.recipe-card:hover .recipe-card-media img {
+  transform: scale(1.05);
+}
+
+.recipe-card-media-placeholder {
+  font-size: 40px;
+  color: var(--muted);
+}
+
+.recipe-card-body {
+  padding: 20px 24px 24px;
+}
+
+.recipe-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.recipe-card-author {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* EMPTY STATE */
+.recipes-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 0;
+  color: var(--muted);
+}
+.recipes-empty-icon { font-size: 48px; margin-bottom: 16px; }
+.recipes-empty-text { font-size: 13px; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+.footer-logo span { color: var(--accent); }
+.footer-copy { font-size: 10px; color: var(--muted); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--text); }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 42, 38, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.active {
+  display: flex;
+}
+
+.recipe-modal {
+  background: var(--white);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--bg);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 10;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: var(--border); }
+
+.recipe-modal-media {
+  width: 100%;
+  height: 280px;
+  background: var(--border);
+  border-radius: 24px 24px 0 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.recipe-modal-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.modal-media-placeholder { font-size: 64px; }
+
+.recipe-modal-content {
+  padding: 32px;
+}
+
+.recipe-modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  margin-bottom: 12px;
+}
+
+.recipe-modal-desc {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+.recipe-modal-section {
+  margin-bottom: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.recipe-modal-section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+
+.recipe-modal-ingredients {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipe-modal-ingredients li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 10px 16px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.recipe-modal-ingredients li span:last-child {
+  color: var(--muted);
+}
+
+.recipe-modal-instructions {
+  font-size: 12px;
+  line-height: 2;
+  color: var(--text);
+}

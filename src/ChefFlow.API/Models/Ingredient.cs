@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ChefFlow.API.Models
 {
     public class Ingredient
@@ -7,7 +9,6 @@ namespace ChefFlow.API.Models
         public float Quantity { get; set; }
         public string Unit { get; set; } = string.Empty;
 
-        public Recipe Recipe { get; set; } = null!;
         public Product Product { get; set; } = null!;
     }
 }

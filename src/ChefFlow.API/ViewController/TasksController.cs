@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ChefFlow.API.Controllers
+namespace ChefFlow.API.ViewController
 {
-    public class RegisterController : Controller
+    public class TasksController : Controller
     {
         public IActionResult Index()
         {
