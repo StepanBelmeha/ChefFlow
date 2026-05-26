@@ -43,17 +43,20 @@ function renderRecipes(recipes) {
 async function loadRecipes(search = '') {
     const userId = getUserIdFromToken();
 
-    const url = search
-        ? `/api/Recipe/user/${userId}?search=${encodeURIComponent(search)}`
-        : `/api/Recipe/user/${userId}`;
-
-    const response = await fetch(url, {
+    const response = await fetch(`/api/Favorites/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
     });
 
     if (!response.ok) return;
 
-    const recipes = await response.json();
+    let recipes = await response.json();
+
+    if (search) {
+        recipes = recipes.filter(r =>
+            r.title.toLowerCase().includes(search.toLowerCase())
+        );
+    }
+
     renderRecipes(recipes);
 }
 
@@ -100,8 +103,6 @@ async function openRecipe(id) {
 
     document.getElementById('recipe-modal').classList.add('active');
 }
-
-// Закрити модальне вікно
 document.getElementById('modal-close').addEventListener('click', () => {
     document.getElementById('recipe-modal').classList.remove('active');
 });
