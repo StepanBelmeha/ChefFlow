@@ -103,6 +103,9 @@ async function openRecipe(id) {
 
     document.getElementById('recipe-modal').classList.add('active');
 }
+
+
+
 document.getElementById('modal-close').addEventListener('click', () => {
     document.getElementById('recipe-modal').classList.remove('active');
 });
