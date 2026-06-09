@@ -128,5 +128,26 @@ namespace ChefFlow.API.Controllers
 
             return Ok(ingredients);
         }
+        [HttpGet("published")]
+        public IActionResult GetPublishedRecipes()
+        {
+            var recipes = _context.Recipes
+                .Where(r => r.IsPublished)
+                .ToList();
+
+            return Ok(recipes);
+        }
+
+        [HttpPatch("{id}/publish")]
+        public IActionResult Publish(int id)
+        {
+            var recipe = _context.Recipes.Find(id);
+            if (recipe == null) return NotFound();
+
+            recipe.IsPublished = true;
+            _context.SaveChanges();
+
+            return Ok(recipe);
+        }
     }
 }

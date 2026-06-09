@@ -7,6 +7,7 @@ namespace ChefFlow.API.DTO
         [Required(ErrorMessage = "Ім'я обов'язкове")]
         public required string Name { get; set; }
         [Required(ErrorMessage = "Email обов'язковий")]
+        [EmailAddress(ErrorMessage = "Невірний формат email")]
         public required string Email { get; set; }
 
         [Required(ErrorMessage = "Пароль обов'язковий")]
