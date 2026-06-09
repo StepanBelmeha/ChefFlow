@@ -16,10 +16,25 @@ namespace ChefFlow.API.Controllers
         {
             var favorites = _context.Favorites
                 .Where(f => f.UserId == userId)
-                    .Join(_context.Recipes,
+                .Join(_context.Recipes,
                     f => f.RecipeId,
                     r => r.Id,
                     (f, r) => r)
+                .Join(_context.Users,
+                    r => r.UserId,
+                    u => u.Id,
+                    (r, u) => new RecipeResponseDTO
+                    {
+                        Id = r.Id,
+                        UserId = r.UserId,
+                        Title = r.Title,
+                        Description = r.Description,
+                        Instructions = r.Instructions,
+                        IsPublished = r.IsPublished,
+                        CreatedAt = r.CreatedAt,
+                        Media = r.Media,
+                        AuthorName = u.Name
+                    })
                 .ToList();
             return Ok(favorites);
         }

@@ -1,6 +1,4 @@
-@{
-    Layout = null;
-}
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -16,8 +14,8 @@
 <nav>
   <a href="/Home/Index" class="logo">Chef<span>Flow</span></a>
   <ul class="nav-links">
-    <li><a href="/Recipes/Index">Рецепти</a></li>
-    <li><a href="/Favorites/Index" class="active">Обране</a></li>
+    <li><a href="/Recipes/Index" class="active">Рецепти</a></li>
+    <li><a href="/Favorites/Index">Обране</a></li>
     <li><a href="/Tasks/Index">Завдання</a></li>
   </ul>
   <div class="nav-actions">
@@ -26,44 +24,34 @@
 </nav>
 
 <main class="recipes-wrapper">
-
   <div class="recipes-page-header">
-    <h1 class="recipes-title">Рецепти</h1>
+    <h1 class="recipes-title">Всі рецепти</h1>
   </div>
-
   <div class="recipes-divider"></div>
-
   <div class="recipes-toolbar">
     <input type="text" class="search-input" id="search-input" placeholder="Пошук..."/>
   </div>
-
-  <section class="recipes-grid" id="recipes-grid">
-    <!-- картки генеруються через JS -->
-  </section>
-
+  <section class="recipes-grid" id="recipes-grid"></section>
 </main>
-<!-- МОДАЛЬНЕ ВІКНО РЕЦЕПТУ -->
+
 <div class="modal-overlay" id="recipe-modal">
   <div class="recipe-modal">
     <button class="modal-close" id="modal-close">✕</button>
-
     <div class="recipe-modal-media">
       <img id="modal-media" src="" alt=""/>
       <div class="modal-media-placeholder" id="modal-media-placeholder">🍽️</div>
     </div>
-
     <div class="recipe-modal-content">
       <div class="recipe-modal-header">
         <h2 class="recipe-modal-title" id="modal-title"></h2>
-        <div class="recipe-modal-status" id="modal-status"></div>
       </div>
-
       <p class="recipe-modal-desc" id="modal-desc"></p>
 
       <div class="recipe-modal-section">
         <h3 class="recipe-modal-section-title">Інгредієнти</h3>
         <ul class="recipe-modal-ingredients" id="modal-ingredients"></ul>
       </div>
+
       <div class="recipe-modal-section">
         <h3 class="recipe-modal-section-title">Масштабування</h3>
         <div class="scale-form">
@@ -84,9 +72,7 @@
       </div>
 
       <div class="recipe-modal-actions">
-        <button class="btn-primary" id="publish-recipe-btn" onclick="publishRecipe()">
-          🌐 Опублікувати
-        </button>
+        <button class="btn-primary" id="add-to-favorite-btn">❤️ В обране</button>
       </div>
     </div>
   </div>
@@ -104,6 +90,6 @@
 </footer>
 
 <script src="/js/auth-guard.js"></script>
-<script src="/js/my-recipes.js"></script>
+<script src="/js/all_recipes.js"></script>
 </body>
 </html>

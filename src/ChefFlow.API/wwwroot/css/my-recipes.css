@@ -20,6 +20,30 @@ body {
   min-height: 100vh;
 }
 
+.scale-form {
+  margin-bottom: 16px;
+}
+
+.scale-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.scale-row .form-input {
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.scale-row .form-input:focus { border-color: var(--accent); }
+
 .recipe-modal-header {
     display: flex;
     align-items: flex-start;

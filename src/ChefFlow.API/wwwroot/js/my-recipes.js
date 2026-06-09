@@ -2,7 +2,7 @@ const token = localStorage.getItem('token');
 const userName = localStorage.getItem('userName');
 let currentRecipeId = null;
 let currentRecipePublished = false;
-
+let currentIngredients = [];
 if (userName) {
     document.getElementById('user-btn').textContent = `👤 ${userName}`;
 }
@@ -37,7 +37,7 @@ function renderRecipes(recipes) {
             <div class="recipe-card-body">
                 <h3 class="recipe-card-title">${recipe.title}</h3>
                 <div class="recipe-card-footer">
-                    <p class="recipe-card-author">${userName || 'Автор'}</p>
+                    <p class="recipe-card-author">${recipe.authorName || userName || 'Автор'}</p>
                     ${recipe.isPublished
                         ? `<span class="status-published">✓ Опубліковано</span>`
                         : `<span class="status-draft">Чернетка</span>`
@@ -107,17 +107,29 @@ async function openRecipe(id) {
     const ingResponse = await fetch(`/api/Recipe/${id}/ingredients`, {
         headers: { 'Authorization': `Bearer ${token}` }
     });
-
     if (ingResponse.ok) {
-        const ingredients = await ingResponse.json();
-        document.getElementById('modal-ingredients').innerHTML = ingredients
-            .map(ing => `
-                <li>
-                    <span>${ing.productName}</span>
-                    <span>${ing.quantity} ${ing.unit}</span>
-                </li>
-            `).join('');
+    const ingredients = await ingResponse.json();
+    currentIngredients = ingredients; // зберігаємо для масштабування
+
+    document.getElementById('modal-ingredients').innerHTML = ingredients
+        .map(ing => `
+            <li>
+                <span>${ing.productName}</span>
+                <span>${ing.quantity} ${ing.unit}</span>
+            </li>
+        `).join('');
+
+    // Заповнити select інгредієнтами
+    const select = document.getElementById('scale-ingredient');
+    select.innerHTML = '<option value="">Оберіть інгредієнт</option>' +
+        ingredients.map((ing, index) => `
+            <option value="${index}">${ing.productName} (${ing.quantity} ${ing.unit})</option>
+        `).join('');
+
+    // Сховати попередні результати
+    document.getElementById('scaled-ingredients').style.display = 'none';
     }
+
 
     document.getElementById('recipe-modal').classList.add('active');
 }
@@ -138,6 +150,39 @@ async function publishRecipe() {
     } else {
         alert('Помилка при публікації');
     }
+}
+
+function scaleRecipe() {
+    const selectEl = document.getElementById('scale-ingredient');
+    const newValue = parseFloat(document.getElementById('scale-value').value);
+    const selectedIndex = parseInt(selectEl.value);
+
+    if (isNaN(selectedIndex) || selectEl.value === '') {
+        alert('Оберіть інгредієнт');
+        return;
+    }
+    if (!newValue || newValue <= 0) {
+        alert('Введіть коректну кількість');
+        return;
+    }
+
+    const baseIngredient = currentIngredients[selectedIndex];
+    const ratio = newValue / baseIngredient.quantity;
+
+    const scaled = currentIngredients.map(ing => ({
+        productName: ing.productName,
+        quantity: Math.round(ing.quantity * ratio * 100) / 100,
+        unit: ing.unit
+    }));
+
+    const scaledList = document.getElementById('scaled-ingredients');
+    scaledList.style.display = 'flex';
+    scaledList.innerHTML = scaled.map(ing => `
+        <li>
+            <span>${ing.productName}</span>
+            <span>${ing.quantity} ${ing.unit}</span>
+        </li>
+    `).join('');
 }
 
 document.getElementById('modal-close').addEventListener('click', () => {
