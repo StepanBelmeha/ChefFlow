@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChefFlow.API.Controllers
 {
-    public class MyRecipesController : Controller
+    public class FavoritesController : Controller
     {
-        public IActionResult Index() => View();
-        public IActionResult Details() => View();
+        public IActionResult Index()
+        {
+            return View();
+        }
     }
 }

@@ -12,7 +12,35 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.note-add-form {
+  margin-bottom: 16px;
+}
 
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.note-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.note-content {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.note-date {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+}
 body {
   font-family: 'DM Mono', monospace;
   background: var(--bg);

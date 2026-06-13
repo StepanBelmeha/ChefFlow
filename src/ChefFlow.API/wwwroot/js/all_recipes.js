@@ -150,6 +150,30 @@ function scaleRecipe() {
         </li>
     `).join('');
 }
+// Заміни placeholder для кнопки на справжню логіку
+document.getElementById('add-to-favorite-btn').addEventListener('click', async () => {
+    const userId = getUserIdFromToken();
+
+    const response = await fetch('/api/Favorite', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            userId: parseInt(userId),
+            recipeId: currentRecipeId
+        })
+    });
+
+    if (response.ok) {
+        alert('Додано в обране!');
+    } else if (response.status === 409) {
+        alert('Рецепт вже в обраному');
+    } else {
+        alert('Помилка при додаванні в обране');
+    }
+});
 
 document.getElementById('modal-close').addEventListener('click', () => {
     document.getElementById('recipe-modal').classList.remove('active');
