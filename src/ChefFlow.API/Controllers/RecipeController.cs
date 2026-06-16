@@ -215,5 +215,17 @@ namespace ChefFlow.API.Controllers
 
             return Ok(recipe);
         }
+
+        [HttpPatch("{id}/media")]
+        public IActionResult UpdateMedia(int id, [FromBody] UpdateMediaDTO dto)
+        {
+            var recipe = _context.Recipes.Find(id);
+            if (recipe == null) return NotFound();
+
+            recipe.Media = dto.MediaPath;
+            _context.SaveChanges();
+
+            return Ok(recipe);
+        }
     }
 }

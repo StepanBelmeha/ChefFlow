@@ -107,6 +107,7 @@ function removeIngredient(index) {
 }
 
 let uploadedMediaPath = '';
+let mediaFile = null;
 
 async function handleMediaFile(file) {
     if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
@@ -114,28 +115,14 @@ async function handleMediaFile(file) {
         return;
     }
 
-    // Показати прев'ю
+    // Зберегти файл для завантаження при публікації
+    mediaFile = file;
+
+    // Показати превʼю
     const url = URL.createObjectURL(file);
     mediaPreview.src = url;
     mediaPreview.style.display = 'block';
     mediaPlaceholder.style.display = 'none';
-
-    // Завантажити файл на сервер
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await fetch('/api/Recipe/upload', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData
-    });
-
-    if (response.ok) {
-        const data = await response.json();
-        uploadedMediaPath = data.path;
-    } else {
-        alert('Помилка завантаження файлу');
-    }
 }
 
 
@@ -152,13 +139,13 @@ document.getElementById('publish-btn').addEventListener('click', async () => {
     const title = document.getElementById('recipe-name').value;
     const description = document.getElementById('recipe-short-desc').value;
     const instructions = document.getElementById('recipe-steps').innerHTML;
-    const mediaUrl = mediaPreview.src || '';
 
     if (!title) {
         alert('Введіть назву рецепту');
         return;
     }
 
+    // 1. Створити рецепт БЕЗ медіа
     const response = await fetch('/api/Recipe', {
         method: 'POST',
         headers: {
@@ -170,17 +157,58 @@ document.getElementById('publish-btn').addEventListener('click', async () => {
             title,
             description,
             instructions,
-            isPublished: true,
+            isPublished: false,
             createdAt: new Date().toISOString(),
-            media: uploadedMediaPath,
+            media: '',
             ingredients
         })
     });
 
-    if (response.ok) {
-        alert('Рецепт опубліковано!');
-        window.location.href = '/AddRecipe/Index';
-    } else {
+    if (!response.ok) {
         alert('Помилка при публікації рецепту');
+        return;
     }
+
+    const recipeData = await response.json();
+    const recipeId = recipeData.id;
+
+    // 2. Якщо є медіа - завантажити його та оновити рецепт
+    if (mediaFile) {
+        const formData = new FormData();
+        formData.append('file', mediaFile);
+
+        const uploadResponse = await fetch('/api/Recipe/upload', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+
+        if (uploadResponse.ok) {
+            const uploadData = await uploadResponse.json();
+            const mediaPath = uploadData.path;
+
+            // 3. Оновити рецепт з шляхом медіа
+            const updateResponse = await fetch(`/api/Recipe/${recipeId}/media`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    mediaPath: mediaPath
+                })
+            });
+
+            if (!updateResponse.ok) {
+                alert('Помилка при додаванні медіа');
+                return;
+            }
+        } else {
+            alert('Помилка завантаження файлу');
+            return;
+        }
+    }
+
+    alert('Рецепт опубліковано!');
+    window.location.href = '/AddRecipe/Index';
 });
