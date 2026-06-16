@@ -110,10 +110,19 @@ namespace ChefFlow.API.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        public IActionResult GetByUserId(int userId)
+        public IActionResult GetByUserId(int userId, [FromQuery] string? search)
         {
-            var recipes = _context.Recipes
-                .Where(r => r.UserId == userId)
+            var query = _context.Recipes
+                .Where(r => r.UserId == userId);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var normalizedSearch = search.Trim();
+                query = query.Where(r => r.Title.Contains(normalizedSearch)
+                    || r.Description.Contains(normalizedSearch));
+            }
+
+            var recipes = query
                 .Select(r => new RecipeResponseDTO
                 {
                     Id = r.Id,

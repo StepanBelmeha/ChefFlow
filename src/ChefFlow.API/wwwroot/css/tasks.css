@@ -19,6 +19,27 @@ body {
   color: var(--text);
   min-height: 100vh;
 }
+.task-date.normal {
+    color: #4ade80;           /* зелений */
+}
+
+.task-date.attention {
+    color: #fbbf24;           /* жовто-помаранчевий */
+}
+
+.task-date.warning {
+    color: #f97316;           /* помаранчевий */
+}
+
+.task-date.urgent {
+    color: #ef4444;           /* червоний */
+    font-weight: 600;
+}
+
+.task-date.overdue {
+    color: #b91c1c;           /* темно-червоний */
+    font-weight: 700;
+}
 
 /* NAV */
 nav {

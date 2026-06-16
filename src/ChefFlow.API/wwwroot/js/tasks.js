@@ -25,6 +25,17 @@ document.getElementById('modal-overlay').addEventListener('click', (e) => {
     }
 });
 
+function getDeadleneColor(deadline){
+    if(!deadline) return "normal";
+    const now = new Date();
+    const taskDeadline = new Date(deadline);
+    if(taskDeadline < now) return "overdue";
+    const diffInDays = (taskDeadline - now) / (1000 * 60 * 60 * 24);
+    if(diffInDays <= 1) return "urgent";
+    if(diffInDays <= 3) return "warning";
+    if(diffInDays <= 7) return "attention";
+    return "normal";
+}
 // Створити завдання
 document.querySelector('.modal .btn-primary').addEventListener('click', async () => {
     const userId = getUserIdFromToken();
@@ -107,6 +118,8 @@ function createTaskCard(task) {
         ? new Date(task.deadline).toLocaleDateString('uk-UA')
         : '—';
 
+    const deadlineColorClass = getDeadleneColor(task.deadline);
+
     const article = document.createElement('article');
     article.className = 'task-card';
     article.dataset.id = task.id;
@@ -125,9 +138,9 @@ function createTaskCard(task) {
         </div>
         <p class="task-desc">${escapeHtml(task.description ?? '')}</p>
         <div class="task-footer">
-            <span class="task-date">
-                <img src="/images/calendar_icon.svg" alt="Calendar"> ${deadline}
-            </span>
+        <span class="task-date ${deadlineColorClass}">
+            <img src="/images/calendar_icon.svg" alt="Calendar"> ${deadline}
+        </span>
             <span class="task-priority ${p.cls}">${task.priority}</span>
         </div>
     `;
