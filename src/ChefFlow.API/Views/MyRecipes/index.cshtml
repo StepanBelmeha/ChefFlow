@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Обране — ChefFlow</title>
+  <title>Рецепти — ChefFlow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/my-recipes.css"/>
@@ -26,45 +26,44 @@
 </nav>
 
 <main class="recipes-wrapper">
+
   <div class="recipes-page-header">
-    <h1 class="recipes-title">Обране</h1>
+    <h1 class="recipes-title">Рецепти</h1>
   </div>
+
   <div class="recipes-divider"></div>
+
   <div class="recipes-toolbar">
     <input type="text" class="search-input" id="search-input" placeholder="Пошук..."/>
   </div>
-  <section class="recipes-grid" id="recipes-grid"></section>
-</main>
 
+  <section class="recipes-grid" id="recipes-grid">
+    <!-- картки генеруються через JS -->
+  </section>
+
+</main>
+<!-- МОДАЛЬНЕ ВІКНО РЕЦЕПТУ -->
 <div class="modal-overlay" id="recipe-modal">
   <div class="recipe-modal">
     <button class="modal-close" id="modal-close">✕</button>
+
     <div class="recipe-modal-media">
       <img id="modal-media" src="" alt=""/>
       <div class="modal-media-placeholder" id="modal-media-placeholder">🍽️</div>
     </div>
+
     <div class="recipe-modal-content">
       <div class="recipe-modal-header">
         <h2 class="recipe-modal-title" id="modal-title"></h2>
+        <div class="recipe-modal-status" id="modal-status"></div>
       </div>
+
       <p class="recipe-modal-desc" id="modal-desc"></p>
 
       <div class="recipe-modal-section">
         <h3 class="recipe-modal-section-title">Інгредієнти</h3>
         <ul class="recipe-modal-ingredients" id="modal-ingredients"></ul>
       </div>
-      <div class="recipe-modal-section">
-        <h3 class="recipe-modal-section-title">Нотатки</h3>
-        
-        <div class="note-add-form">
-            <textarea class="form-input form-textarea" id="note-content" placeholder="Текст нотатки..."></textarea>
-            <button class="btn-primary" onclick="addNote()">Додати нотатку</button>
-        </div>
-
-        <div class="notes-list" id="notes-list">
-            <!-- нотатки генеруються через JS -->
-        </div>
-        </div>
       <div class="recipe-modal-section">
         <h3 class="recipe-modal-section-title">Масштабування</h3>
         <div class="scale-form">
@@ -83,6 +82,12 @@
         <h3 class="recipe-modal-section-title">Рецепт</h3>
         <div class="recipe-modal-instructions" id="modal-instructions"></div>
       </div>
+
+      <div class="recipe-modal-actions">
+        <button class="btn-primary" id="publish-recipe-btn" onclick="publishRecipe()">
+          🌐 Опублікувати
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -99,6 +104,6 @@
 </footer>
 
 <script src="/js/auth-guard.js"></script>
-<script src="/js/favorites.js"></script>
+<script src="/js/my-recipes.js"></script>
 </body>
 </html>

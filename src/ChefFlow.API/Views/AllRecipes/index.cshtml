@@ -1,12 +1,10 @@
-@{
-    Layout = null;
-}
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Обране — ChefFlow</title>
+  <title>Рецепти — ChefFlow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/my-recipes.css"/>
@@ -16,8 +14,8 @@
 <nav>
   <a href="/Home/Index" class="logo">Chef<span>Flow</span></a>
   <ul class="nav-links">
-    <li><a href="/Recipes/Index">Рецепти</a></li>
-    <li><a href="/Favorites/Index" class="active">Обране</a></li>
+    <li><a href="/Recipes/Index" class="active">Рецепти</a></li>
+    <li><a href="/Favorites/Index">Обране</a></li>
     <li><a href="/Tasks/Index">Завдання</a></li>
   </ul>
   <div class="nav-actions">
@@ -27,7 +25,7 @@
 
 <main class="recipes-wrapper">
   <div class="recipes-page-header">
-    <h1 class="recipes-title">Обране</h1>
+    <h1 class="recipes-title">Всі рецепти</h1>
   </div>
   <div class="recipes-divider"></div>
   <div class="recipes-toolbar">
@@ -53,18 +51,7 @@
         <h3 class="recipe-modal-section-title">Інгредієнти</h3>
         <ul class="recipe-modal-ingredients" id="modal-ingredients"></ul>
       </div>
-      <div class="recipe-modal-section">
-        <h3 class="recipe-modal-section-title">Нотатки</h3>
-        
-        <div class="note-add-form">
-            <textarea class="form-input form-textarea" id="note-content" placeholder="Текст нотатки..."></textarea>
-            <button class="btn-primary" onclick="addNote()">Додати нотатку</button>
-        </div>
 
-        <div class="notes-list" id="notes-list">
-            <!-- нотатки генеруються через JS -->
-        </div>
-        </div>
       <div class="recipe-modal-section">
         <h3 class="recipe-modal-section-title">Масштабування</h3>
         <div class="scale-form">
@@ -83,6 +70,10 @@
         <h3 class="recipe-modal-section-title">Рецепт</h3>
         <div class="recipe-modal-instructions" id="modal-instructions"></div>
       </div>
+
+      <div class="recipe-modal-actions">
+        <button class="btn-primary" id="add-to-favorite-btn">❤️ В обране</button>
+      </div>
     </div>
   </div>
 </div>
@@ -99,6 +90,6 @@
 </footer>
 
 <script src="/js/auth-guard.js"></script>
-<script src="/js/favorites.js"></script>
+<script src="/js/all_recipes.js"></script>
 </body>
 </html>

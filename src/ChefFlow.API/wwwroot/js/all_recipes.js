@@ -20,8 +20,8 @@ function renderRecipes(recipes) {
     if (recipes.length === 0) {
         grid.innerHTML = `
             <div class="recipes-empty">
-                <div class="recipes-empty-icon">❤️</div>
-                <div class="recipes-empty-text">Обраних рецептів ще немає.</div>
+                <div class="recipes-empty-icon">📖</div>
+                <div class="recipes-empty-text">Рецептів ще немає.</div>
             </div>`;
         return;
     }
@@ -42,15 +42,18 @@ function renderRecipes(recipes) {
     `).join('');
 }
 
-async function loadFavorites(search = '') {
+async function loadRecipes(search = '') {
     const userId = getUserIdFromToken();
-    const response = await fetch(`/api/Favorite/${userId}`, {
+    const response = await fetch(`/api/Recipe/published`, {
         headers: { 'Authorization': `Bearer ${token}` }
     });
 
     if (!response.ok) return;
 
     let recipes = await response.json();
+
+    // Фільтруємо рецепти поточного користувача
+    recipes = recipes.filter(r => r.userId !== parseInt(userId));
 
     if (search) {
         recipes = recipes.filter(r =>
@@ -70,7 +73,6 @@ async function openRecipe(id) {
 
     const recipe = await response.json();
     currentRecipeId = id;
-    await loadNotes(id);
 
     document.getElementById('modal-title').textContent = recipe.title;
     document.getElementById('modal-desc').textContent = recipe.description;
@@ -148,60 +150,30 @@ function scaleRecipe() {
         </li>
     `).join('');
 }
-async function loadNotes(recipeId) {
-    const response = await fetch(`/api/Note/recipe/${recipeId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+// Заміни placeholder для кнопки на справжню логіку
+document.getElementById('add-to-favorite-btn').addEventListener('click', async () => {
+    const userId = getUserIdFromToken();
+
+    const response = await fetch('/api/Favorite', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            userId: parseInt(userId),
+            recipeId: currentRecipeId
+        })
     });
 
-    if (!response.ok) return;
-
-    const notes = await response.json();
-    document.getElementById('notes-list').innerHTML = notes.map(note => `
-        <div class="note-card">
-            <p class="note-content">${note.content}</p>
-            <p class="note-date">${new Date(note.createdAt).toLocaleDateString('uk-UA')}</p>
-        </div>
-    `).join('');
-}
-
-async function addNote() {
-    const content = document.getElementById('note-content').value.trim();
-    if (!content) {
-        alert('Будь ласка, введіть текст нотатки');
-        return;
+    if (response.ok) {
+        alert('Додано в обране!');
+    } else if (response.status === 409) {
+        alert('Рецепт вже в обраному');
+    } else {
+        alert('Помилка при додаванні в обране');
     }
-
-    if (!currentRecipeId) {
-        alert('Помилка: рецепт не вибран');
-        return;
-    }
-
-    try {
-        const response = await fetch('/api/Note', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                recipeId: currentRecipeId,
-                content: content
-            })
-        });
-
-        if (response.ok) {
-            document.getElementById('note-content').value = '';
-            await loadNotes(currentRecipeId);
-        } else {
-            const errorData = await response.text();
-            console.error('Помилка при додаванні нотатки:', response.status, errorData);
-            alert('Помилка при додаванні нотатки: ' + response.status);
-        }
-    } catch (error) {
-        console.error('Помилка мережі:', error);
-        alert('Помилка: ' + error.message);
-    }
-}
+});
 
 document.getElementById('modal-close').addEventListener('click', () => {
     document.getElementById('recipe-modal').classList.remove('active');
@@ -214,7 +186,7 @@ document.getElementById('recipe-modal').addEventListener('click', (e) => {
 });
 
 document.getElementById('search-input').addEventListener('input', (e) => {
-    loadFavorites(e.target.value.trim());
+    loadRecipes(e.target.value.trim());
 });
 
-loadFavorites();
+loadRecipes();

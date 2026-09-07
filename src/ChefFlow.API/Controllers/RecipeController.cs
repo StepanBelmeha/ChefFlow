@@ -14,8 +14,19 @@ namespace ChefFlow.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var recipes = _context
-                .Recipes
+            var recipes = _context.Recipes
+                .Select(r => new RecipeResponseDTO
+                {
+                    Id = r.Id,
+                    UserId = r.UserId,
+                    Title = r.Title,
+                    Description = r.Description,
+                    Instructions = r.Instructions,
+                    IsPublished = r.IsPublished,
+                    CreatedAt = r.CreatedAt,
+                    Media = r.Media,
+                    AuthorName = r.User.Name
+                })
                 .ToList();
             return Ok(recipes);
         }
@@ -57,7 +68,19 @@ namespace ChefFlow.API.Controllers
             }
     
             _context.SaveChanges();
-            return Created($"/api/recipe/{recipe.Id}", recipe);
+            var authorName = _context.Users.Find(dto.UserId)?.Name ?? string.Empty;
+            return Created($"/api/recipe/{recipe.Id}", new RecipeResponseDTO
+            {
+                Id = recipe.Id,
+                UserId = recipe.UserId,
+                Title = recipe.Title,
+                Description = recipe.Description,
+                Instructions = recipe.Instructions,
+                IsPublished = recipe.IsPublished,
+                CreatedAt = recipe.CreatedAt,
+                Media = recipe.Media,
+                AuthorName = authorName
+            });
         }
 
         [HttpPost("upload")]
@@ -87,22 +110,53 @@ namespace ChefFlow.API.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        public IActionResult GetByUserId(int userId)
+        public IActionResult GetByUserId(int userId, [FromQuery] string? search)
         {
-            var recipes = _context.Recipes
-            .Where(r => r.UserId == userId)
-            .ToList();
-            if (recipes == null)
+            var query = _context.Recipes
+                .Where(r => r.UserId == userId);
+
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                return NotFound();
+                var normalizedSearch = search.Trim();
+                query = query.Where(r => r.Title.Contains(normalizedSearch)
+                    || r.Description.Contains(normalizedSearch));
             }
+
+            var recipes = query
+                .Select(r => new RecipeResponseDTO
+                {
+                    Id = r.Id,
+                    UserId = r.UserId,
+                    Title = r.Title,
+                    Description = r.Description,
+                    Instructions = r.Instructions,
+                    IsPublished = r.IsPublished,
+                    CreatedAt = r.CreatedAt,
+                    Media = r.Media,
+                    AuthorName = r.User.Name
+                })
+                .ToList();
             return Ok(recipes);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var recipe = _context.Recipes.Find(id);
+            var recipe = _context.Recipes
+                .Where(r => r.Id == id)
+                .Select(r => new RecipeResponseDTO
+                {
+                    Id = r.Id,
+                    UserId = r.UserId,
+                    Title = r.Title,
+                    Description = r.Description,
+                    Instructions = r.Instructions,
+                    IsPublished = r.IsPublished,
+                    CreatedAt = r.CreatedAt,
+                    Media = r.Media,
+                    AuthorName = r.User.Name
+                })
+                .FirstOrDefault();
             if (recipe == null)
             {
                 return NotFound();
@@ -127,6 +181,51 @@ namespace ChefFlow.API.Controllers
                 .ToList();
 
             return Ok(ingredients);
+        }
+        [HttpGet("published")]
+        public IActionResult GetPublishedRecipes()
+        {
+            var recipes = _context.Recipes
+                .Where(r => r.IsPublished)
+                .Select(r => new RecipeResponseDTO
+                {
+                    Id = r.Id,
+                    UserId = r.UserId,
+                    Title = r.Title,
+                    Description = r.Description,
+                    Instructions = r.Instructions,
+                    IsPublished = r.IsPublished,
+                    CreatedAt = r.CreatedAt,
+                    Media = r.Media,
+                    AuthorName = r.User.Name
+                })
+                .ToList();
+
+            return Ok(recipes);
+        }
+
+        [HttpPatch("{id}/publish")]
+        public IActionResult Publish(int id)
+        {
+            var recipe = _context.Recipes.Find(id);
+            if (recipe == null) return NotFound();
+
+            recipe.IsPublished = true;
+            _context.SaveChanges();
+
+            return Ok(recipe);
+        }
+
+        [HttpPatch("{id}/media")]
+        public IActionResult UpdateMedia(int id, [FromBody] UpdateMediaDTO dto)
+        {
+            var recipe = _context.Recipes.Find(id);
+            if (recipe == null) return NotFound();
+
+            recipe.Media = dto.MediaPath;
+            _context.SaveChanges();
+
+            return Ok(recipe);
         }
     }
 }

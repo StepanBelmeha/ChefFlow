@@ -1,8 +1,8 @@
 const token = localStorage.getItem('token');
 const userName = localStorage.getItem('userName');
 let currentRecipeId = null;
+let currentRecipePublished = false;
 let currentIngredients = [];
-
 if (userName) {
     document.getElementById('user-btn').textContent = `👤 ${userName}`;
 }
@@ -20,8 +20,8 @@ function renderRecipes(recipes) {
     if (recipes.length === 0) {
         grid.innerHTML = `
             <div class="recipes-empty">
-                <div class="recipes-empty-icon">❤️</div>
-                <div class="recipes-empty-text">Обраних рецептів ще немає.</div>
+                <div class="recipes-empty-icon">📖</div>
+                <div class="recipes-empty-text">Рецептів ще немає. Створи перший!</div>
             </div>`;
         return;
     }
@@ -36,28 +36,30 @@ function renderRecipes(recipes) {
             </div>
             <div class="recipe-card-body">
                 <h3 class="recipe-card-title">${recipe.title}</h3>
-                <p class="recipe-card-author">${recipe.authorName || 'Автор'}</p>
+                <div class="recipe-card-footer">
+                    <p class="recipe-card-author">${recipe.authorName || userName || 'Автор'}</p>
+                    ${recipe.isPublished
+                        ? `<span class="status-published">✓ Опубліковано</span>`
+                        : `<span class="status-draft">Чернетка</span>`
+                    }
+                </div>
             </div>
         </div>
     `).join('');
 }
 
-async function loadFavorites(search = '') {
+async function loadRecipes(search = '') {
     const userId = getUserIdFromToken();
-    const response = await fetch(`/api/Favorite/${userId}`, {
+    const url = search
+        ? `/api/Recipe/user/${userId}?search=${encodeURIComponent(search)}`
+        : `/api/Recipe/user/${userId}`;
+
+    const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
     });
 
     if (!response.ok) return;
-
-    let recipes = await response.json();
-
-    if (search) {
-        recipes = recipes.filter(r =>
-            r.title.toLowerCase().includes(search.toLowerCase())
-        );
-    }
-
+    const recipes = await response.json();
     renderRecipes(recipes);
 }
 
@@ -70,11 +72,25 @@ async function openRecipe(id) {
 
     const recipe = await response.json();
     currentRecipeId = id;
-    await loadNotes(id);
+    currentRecipePublished = recipe.isPublished;
 
     document.getElementById('modal-title').textContent = recipe.title;
     document.getElementById('modal-desc').textContent = recipe.description;
     document.getElementById('modal-instructions').innerHTML = recipe.instructions;
+
+    // Статус публікації
+    const statusEl = document.getElementById('modal-status');
+    const publishBtn = document.getElementById('publish-recipe-btn');
+
+    if (recipe.isPublished) {
+        statusEl.textContent = '✓ Опубліковано';
+        statusEl.className = 'recipe-modal-status status-published';
+        publishBtn.style.display = 'none';
+    } else {
+        statusEl.textContent = 'Чернетка';
+        statusEl.className = 'recipe-modal-status status-draft';
+        publishBtn.style.display = 'block';
+    }
 
     const mediaImg = document.getElementById('modal-media');
     const mediaPlaceholder = document.getElementById('modal-media-placeholder');
@@ -91,29 +107,49 @@ async function openRecipe(id) {
     const ingResponse = await fetch(`/api/Recipe/${id}/ingredients`, {
         headers: { 'Authorization': `Bearer ${token}` }
     });
-
     if (ingResponse.ok) {
-        const ingredients = await ingResponse.json();
-        currentIngredients = ingredients;
+    const ingredients = await ingResponse.json();
+    currentIngredients = ingredients; // зберігаємо для масштабування
 
-        document.getElementById('modal-ingredients').innerHTML = ingredients
-            .map(ing => `
-                <li>
-                    <span>${ing.productName}</span>
-                    <span>${ing.quantity} ${ing.unit}</span>
-                </li>
-            `).join('');
+    document.getElementById('modal-ingredients').innerHTML = ingredients
+        .map(ing => `
+            <li>
+                <span>${ing.productName}</span>
+                <span>${ing.quantity} ${ing.unit}</span>
+            </li>
+        `).join('');
 
-        const select = document.getElementById('scale-ingredient');
-        select.innerHTML = '<option value="">Оберіть інгредієнт</option>' +
-            ingredients.map((ing, index) => `
-                <option value="${index}">${ing.productName} (${ing.quantity} ${ing.unit})</option>
-            `).join('');
+    // Заповнити select інгредієнтами
+    const select = document.getElementById('scale-ingredient');
+    select.innerHTML = '<option value="">Оберіть інгредієнт</option>' +
+        ingredients.map((ing, index) => `
+            <option value="${index}">${ing.productName} (${ing.quantity} ${ing.unit})</option>
+        `).join('');
 
-        document.getElementById('scaled-ingredients').style.display = 'none';
+    // Сховати попередні результати
+    document.getElementById('scaled-ingredients').style.display = 'none';
     }
 
+
     document.getElementById('recipe-modal').classList.add('active');
+}
+
+async function publishRecipe() {
+    if (!currentRecipeId) return;
+
+    const response = await fetch(`/api/Recipe/${currentRecipeId}/publish`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (response.ok) {
+        document.getElementById('modal-status').textContent = '✓ Опубліковано';
+        document.getElementById('modal-status').className = 'recipe-modal-status status-published';
+        document.getElementById('publish-recipe-btn').style.display = 'none';
+        loadRecipes();
+    } else {
+        alert('Помилка при публікації');
+    }
 }
 
 function scaleRecipe() {
@@ -148,60 +184,6 @@ function scaleRecipe() {
         </li>
     `).join('');
 }
-async function loadNotes(recipeId) {
-    const response = await fetch(`/api/Note/recipe/${recipeId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (!response.ok) return;
-
-    const notes = await response.json();
-    document.getElementById('notes-list').innerHTML = notes.map(note => `
-        <div class="note-card">
-            <p class="note-content">${note.content}</p>
-            <p class="note-date">${new Date(note.createdAt).toLocaleDateString('uk-UA')}</p>
-        </div>
-    `).join('');
-}
-
-async function addNote() {
-    const content = document.getElementById('note-content').value.trim();
-    if (!content) {
-        alert('Будь ласка, введіть текст нотатки');
-        return;
-    }
-
-    if (!currentRecipeId) {
-        alert('Помилка: рецепт не вибран');
-        return;
-    }
-
-    try {
-        const response = await fetch('/api/Note', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                recipeId: currentRecipeId,
-                content: content
-            })
-        });
-
-        if (response.ok) {
-            document.getElementById('note-content').value = '';
-            await loadNotes(currentRecipeId);
-        } else {
-            const errorData = await response.text();
-            console.error('Помилка при додаванні нотатки:', response.status, errorData);
-            alert('Помилка при додаванні нотатки: ' + response.status);
-        }
-    } catch (error) {
-        console.error('Помилка мережі:', error);
-        alert('Помилка: ' + error.message);
-    }
-}
 
 document.getElementById('modal-close').addEventListener('click', () => {
     document.getElementById('recipe-modal').classList.remove('active');
@@ -214,7 +196,7 @@ document.getElementById('recipe-modal').addEventListener('click', (e) => {
 });
 
 document.getElementById('search-input').addEventListener('input', (e) => {
-    loadFavorites(e.target.value.trim());
+    loadRecipes(e.target.value.trim());
 });
 
-loadFavorites();
+loadRecipes();
