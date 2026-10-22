@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "src\ApiGatewa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "src\AuthService\AuthService.csproj", "{2BB70F92-2BD9-491F-B328-0C6B22CCA987}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogService", "src\CatalogService\CatalogService.csproj", "{6A47D34C-1AA0-4C26-8DB6-7C3CCB31A179}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeService", "src\RecipeService\RecipeService.csproj", "{6A47D34C-1AA0-4C26-8DB6-7C3CCB31A179}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

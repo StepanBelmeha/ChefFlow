@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace CatalogService.Controllers;
+namespace RecipeService.Controllers;
 
 [ApiController]
 [Route("[controller]")]

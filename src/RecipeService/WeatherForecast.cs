@@ -1,4 +1,4 @@
-namespace CatalogService;
+namespace RecipeService;
 
 public class WeatherForecast
 {

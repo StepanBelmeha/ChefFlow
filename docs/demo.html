@@ -6,13 +6,18 @@
   <style>
     body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 32px; }
     h1 { color: #4ec9b0; }
-    h2 { color: #9cdcfe; margin-top: 32px; }
+    h2 { color: #9cdcfe; margin-top: 32px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+    h3 { color: #ce9178; margin-top: 16px; }
     button {
       background: #0e639c; color: white; border: none;
       padding: 10px 20px; border-radius: 6px; cursor: pointer;
       font-family: monospace; font-size: 14px; margin: 4px;
     }
     button:hover { background: #1177bb; }
+    button.danger { background: #8b0000; }
+    button.danger:hover { background: #a00000; }
+    button.success { background: #1a5c1a; }
+    button.success:hover { background: #236b23; }
     .result {
       background: #252526; border: 1px solid #3e3e42;
       border-radius: 6px; padding: 16px; margin-top: 12px;
@@ -20,12 +25,26 @@
     }
     .status-ok { color: #4ec9b0; }
     .status-err { color: #f44747; }
-    input {
+    input, select {
       background: #3c3c3c; border: 1px solid #555; color: #d4d4d4;
       padding: 8px 12px; border-radius: 4px; font-family: monospace;
       width: 300px; margin: 4px;
     }
     label { color: #9cdcfe; display: block; margin-top: 8px; }
+    .token-box {
+      background: #1a1a2e; border: 1px solid #4ec9b0;
+      border-radius: 6px; padding: 12px; margin: 12px 0;
+      font-size: 11px; word-break: break-all;
+    }
+    .section { background: #252526; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; margin-left: 8px;
+    }
+    .badge-get { background: #1a4a8a; }
+    .badge-post { background: #1a5c1a; }
+    .badge-patch { background: #5c3d1a; }
+    .badge-delete { background: #5c1a1a; }
   </style>
 </head>
 <body>
@@ -33,38 +52,98 @@
 <h1>🍳 ChefFlow Gateway Demo</h1>
 <p>Всі запити йдуть через шлюз <strong>http://localhost:5000</strong></p>
 
+<div class="token-box" id="token-display">
+  🔑 Токен: <span id="token-value">не отримано</span>
+</div>
+
 <!-- HEALTH -->
-<h2>1. GET /health — перевірка шлюзу</h2>
-<button onclick="getHealth()">GET /health</button>
-<div class="result" id="result-health">Натисни кнопку...</div>
+<div class="section">
+  <h2>🏥 Health Checks</h2>
+  <button onclick="checkHealth('http://localhost:5000/health', 'result-health-gateway')">
+    GET /health (шлюз)
+  </button>
+  <button onclick="checkHealth('http://localhost:5001/health', 'result-health-auth')">
+    GET /health (AuthService)
+  </button>
+  <button onclick="checkHealth('http://localhost:5002/health', 'result-health-recipe')">
+    GET /health (RecipeService)
+  </button>
+  <div class="result" id="result-health-gateway">Натисни кнопку...</div>
+  <div class="result" id="result-health-auth">Натисни кнопку...</div>
+  <div class="result" id="result-health-recipe">Натисни кнопку...</div>
+</div>
 
-<!-- GET RECIPES -->
-<h2>2. GET /api/Recipe — список рецептів</h2>
-<button onclick="getRecipes()">GET /api/Recipe</button>
-<div class="result" id="result-get">Натисни кнопку...</div>
+<!-- AUTH -->
+<div class="section">
+  <h2>🔐 AuthService <span class="badge badge-post">:5001</span></h2>
 
-<!-- POST LOGIN -->
-<h2>3. POST /api/auth/login — авторизація</h2>
-<label>Email:</label>
-<input type="email" id="email" value="test@test.com"/>
-<label>Пароль:</label>
-<input type="password" id="password" value="123456"/>
-<br/>
-<button onclick="postLogin()">POST /api/auth/login</button>
-<div class="result" id="result-post">Натисни кнопку...</div>
+  <h3>Реєстрація <span class="badge badge-post">POST</span></h3>
+  <label>Ім'я:</label>
+  <input type="text" id="reg-name" value="Тест Користувач"/>
+  <label>Email:</label>
+  <input type="email" id="reg-email" value="test@test.com"/>
+  <label>Пароль:</label>
+  <input type="password" id="reg-password" value="123456"/>
+  <br/>
+  <button class="success" onclick="register()">POST /api/v1/auth/register</button>
+  <div class="result" id="result-register">Натисни кнопку...</div>
 
-<!-- PATCH PUBLISH -->
-<h2>4. PATCH /api/Recipe/{id}/publish — публікація рецепту</h2>
-<label>ID рецепту:</label>
-<input type="number" id="recipe-id" value="1"/>
-<label>JWT токен:</label>
-<input type="text" id="token" placeholder="вставте токен після логіну"/>
-<br/>
-<button onclick="patchPublish()">PATCH /api/Recipe/{id}/publish</button>
-<div class="result" id="result-patch">Натисни кнопку...</div>
+  <h3>Вхід <span class="badge badge-post">POST</span></h3>
+  <label>Email:</label>
+  <input type="email" id="login-email" value="admin@chefflow.com"/>
+  <label>Пароль:</label>
+  <input type="password" id="login-password" value="Admin123!"/>
+  <br/>
+  <button class="success" onclick="login()">POST /api/v1/auth/login</button>
+  <div class="result" id="result-login">Натисни кнопку...</div>
+
+  <h3>Профіль <span class="badge badge-get">GET</span></h3>
+  <button onclick="getMe()">GET /api/v1/users/me</button>
+  <div class="result" id="result-me">Натисни кнопку...</div>
+</div>
+
+<!-- RECIPE -->
+<div class="section">
+  <h2>🍽️ RecipeService <span class="badge badge-get">:5002</span></h2>
+
+  <h3>Список рецептів <span class="badge badge-get">GET</span></h3>
+  <button onclick="getRecipes()">GET /api/v1/recipe</button>
+  <div class="result" id="result-recipes">Натисни кнопку...</div>
+
+  <h3>Створити рецепт <span class="badge badge-post">POST</span></h3>
+  <label>Назва:</label>
+  <input type="text" id="recipe-title" value="Вівсяна каша з бананом"/>
+  <label>Опис:</label>
+  <input type="text" id="recipe-desc" value="Швидкий сніданок"/>
+  <br/>
+  <button class="success" onclick="createRecipe()">POST /api/v1/recipe</button>
+  <div class="result" id="result-create-recipe">Натисни кнопку...</div>
+
+  <h3>Деталі рецепту <span class="badge badge-get">GET</span></h3>
+  <label>ID рецепту:</label>
+  <input type="number" id="recipe-id" value="1"/>
+  <button onclick="getRecipeById()">GET /api/v1/recipe/{id}</button>
+  <div class="result" id="result-recipe-detail">Натисни кнопку...</div>
+
+  <h3>Опублікувати <span class="badge badge-patch">PATCH</span></h3>
+  <label>ID рецепту:</label>
+  <input type="number" id="publish-id" value="1"/>
+  <button onclick="publishRecipe()">PATCH /api/v1/recipe/{id}/publish</button>
+  <div class="result" id="result-publish">Натисни кнопку...</div>
+</div>
+
+<!-- МОНОЛІТ -->
+<div class="section">
+  <h2>🏛️ Моноліт <span class="badge badge-get">:5208</span></h2>
+  <h3>Старий маршрут рецептів <span class="badge badge-get">GET</span></h3>
+  <button onclick="getMonolithRecipes()">GET /api/Recipe (моноліт)</button>
+  <div class="result" id="result-monolith">Натисни кнопку...</div>
+</div>
 
 <script>
 const BASE = 'http://localhost:5000';
+let accessToken = '';
+let refreshToken = '';
 
 function show(id, status, data) {
     const el = document.getElementById(id);
@@ -72,48 +151,110 @@ function show(id, status, data) {
     el.innerHTML = `<span class="${isOk ? 'status-ok' : 'status-err'}">Status: ${status}</span>\n\n${JSON.stringify(data, null, 2)}`;
 }
 
-async function getHealth() {
-    const res = await fetch(`${BASE}/health`);
+function updateTokenDisplay() {
+    document.getElementById('token-value').textContent =
+        accessToken ? accessToken.substring(0, 50) + '...' : 'не отримано';
+}
+
+async function checkHealth(url, resultId) {
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        show(resultId, res.status, data);
+    } catch (e) {
+        document.getElementById(resultId).innerHTML =
+            `<span class="status-err">Сервіс недоступний: ${e.message}</span>`;
+    }
+}
+
+async function register() {
+    const res = await fetch(`${BASE}/api/v1/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: document.getElementById('reg-name').value,
+            email: document.getElementById('reg-email').value,
+            password: document.getElementById('reg-password').value
+        })
+    });
     const data = await res.json();
-    show('result-health', res.status, data);
+    show('result-register', res.status, data);
+}
+
+async function login() {
+    const res = await fetch(`${BASE}/api/v1/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            email: document.getElementById('login-email').value,
+            password: document.getElementById('login-password').value
+        })
+    });
+    const data = await res.json();
+    if (data.accessToken) {
+        accessToken = data.accessToken;
+        refreshToken = data.refreshToken;
+        updateTokenDisplay();
+    }
+    show('result-login', res.status, data);
+}
+
+async function getMe() {
+    const res = await fetch(`${BASE}/api/v1/users/me`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    const data = await res.json();
+    show('result-me', res.status, data);
 }
 
 async function getRecipes() {
+    const res = await fetch(`${BASE}/api/v1/recipe`);
+    const data = await res.json();
+    show('result-recipes', res.status, data);
+}
+
+async function createRecipe() {
+    const res = await fetch(`${BASE}/api/v1/recipe`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+            title: document.getElementById('recipe-title').value,
+            description: document.getElementById('recipe-desc').value,
+            instructions: 'Залити овес молоком, варити 5 хвилин',
+            isPublished: true,
+            ingredients: [
+                { productName: 'овес', quantity: 80, unit: 'г' },
+                { productName: 'молоко', quantity: 250, unit: 'мл' }
+            ]
+        })
+    });
+    const data = await res.json();
+    show('result-create-recipe', res.status, data);
+}
+
+async function getRecipeById() {
+    const id = document.getElementById('recipe-id').value;
+    const res = await fetch(`${BASE}/api/v1/recipe/${id}`);
+    const data = await res.json();
+    show('result-recipe-detail', res.status, data);
+}
+
+async function publishRecipe() {
+    const id = document.getElementById('publish-id').value;
+    const res = await fetch(`${BASE}/api/v1/recipe/${id}/publish`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    show('result-publish', res.status, res.status === 204 ? { message: 'Опубліковано' } : {});
+}
+
+async function getMonolithRecipes() {
     const res = await fetch(`${BASE}/api/Recipe`);
     const data = await res.json();
-    show('result-get', res.status, data);
-}
-
-async function postLogin() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    const res = await fetch(`${BASE}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (data.token) {
-        document.getElementById('token').value = data.token;
-    }
-
-    show('result-post', res.status, data);
-}
-
-async function patchPublish() {
-    const id = document.getElementById('recipe-id').value;
-    const token = document.getElementById('token').value;
-
-    const res = await fetch(`${BASE}/api/Recipe/${id}/publish`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    const data = await res.json();
-    show('result-patch', res.status, data);
+    show('result-monolith', res.status, data);
 }
 </script>
 
