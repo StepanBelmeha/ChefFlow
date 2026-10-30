@@ -10,9 +10,18 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/api/v1/users/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete" ],
-      "DownstreamPathTemplate": "/api/v1/users/{everything}",
+      "UpstreamPathTemplate": "/api/v1/users/me",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/v1/users/me",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5001 }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/v1/users",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/v1/users",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         { "Host": "localhost", "Port": 5001 }
@@ -25,6 +34,15 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         { "Host": "localhost", "Port": 5002 }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/v1/tasks/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete" ],
+      "DownstreamPathTemplate": "/api/v1/tasks/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5003 }
       ]
     },
     {

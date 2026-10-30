@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "ChefFlow.Contracts.Users";
+
+package chefflow.users;
+
+service UserDirectory {
+  rpc GetUserSummary (GetUserSummaryRequest) returns (GetUserSummaryResponse);
+}
+
+message GetUserSummaryRequest {
+  int32 user_id = 1;
+}
+
+message GetUserSummaryResponse {
+  int32 user_id = 1;
+  string name = 2;
+}

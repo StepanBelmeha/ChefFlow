@@ -9,6 +9,27 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var internalApiKey = builder.Configuration["Services:InternalApiKey"];
+if (string.IsNullOrWhiteSpace(internalApiKey)
+    || System.Text.Encoding.UTF8.GetByteCount(internalApiKey) < 32)
+{
+    throw new InvalidOperationException(
+        "Services:InternalApiKey must be configured with at least 32 bytes.");
+}
+
+if (!builder.Environment.IsDevelopment())
+{
+    var grpcEndpointUrl = builder.Configuration["Kestrel:Endpoints:Grpc:Url"];
+    var grpcProtocols = builder.Configuration["Kestrel:Endpoints:Grpc:Protocols"];
+    if (!Uri.TryCreate(grpcEndpointUrl, UriKind.Absolute, out var grpcEndpoint)
+        || grpcEndpoint.Scheme != Uri.UriSchemeHttps
+        || grpcProtocols is not ("Http2" or "Http1AndHttp2"))
+    {
+        throw new InvalidOperationException(
+            "Configure the gRPC Kestrel endpoint with HTTPS and HTTP/2 outside Development.");
+    }
+}
+
 // DB
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AuthDbContext>(options =>
@@ -42,6 +63,7 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthService.Services.AuthService>();
 
 builder.Services.AddControllers();
+builder.Services.AddGrpc();
 
 // Swagger з підтримкою JWT
 builder.Services.AddEndpointsApiExplorer();
@@ -104,7 +126,7 @@ app.MapGet("/health", async (AuthDbContext db) =>
 }).AllowAnonymous();
 
 app.MapControllers();
-
+app.MapGrpcService<UserDirectoryGrpcService>();
 
 
 app.Run();

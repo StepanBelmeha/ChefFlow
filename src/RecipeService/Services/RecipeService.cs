@@ -1,14 +1,43 @@
 using Microsoft.EntityFrameworkCore;
+using ChefFlow.Contracts.Users;
+using Grpc.Core;
 using RecipeService.Data;
 using RecipeService.DTO;
 using RecipeService.Models;
 
 namespace RecipeService.Services
 {
-    public class RecipeService(RecipeDbContext context, ILogger<RecipeService> logger)
+    public class RecipeService(
+        RecipeDbContext context,
+        UserDirectory.UserDirectoryClient userDirectoryClient,
+        ILogger<RecipeService> logger)
     {
         private readonly RecipeDbContext _context = context;
+        private readonly UserDirectory.UserDirectoryClient _userDirectoryClient = userDirectoryClient;
         private readonly ILogger<RecipeService> _logger = logger;
+
+        private async Task<string> GetAuthorNameAsync(int userId)
+        {
+            try
+            {
+                using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+                var response = await _userDirectoryClient.GetUserSummaryAsync(
+                    new GetUserSummaryRequest { UserId = userId },
+                    cancellationToken: timeout.Token);
+                return string.IsNullOrWhiteSpace(response.Name)
+                    ? "Невідомий автор"
+                    : response.Name;
+            }
+            catch (RpcException ex)
+            {
+                _logger.LogWarning(
+                    "Не вдалось отримати автора {UserId}: {StatusCode} {Message}",
+                    userId,
+                    ex.StatusCode,
+                    ex.Status.Detail);
+                return "Невідомий автор";
+            }
+        }
 
         public async Task<PagedResult<RecipeDto>> GetAllAsync(
             int page, int pageSize, string? search, bool? isPublished, string? sortBy, bool desc)
@@ -37,21 +66,24 @@ namespace RecipeService.Services
             var recipes = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(r => new RecipeDto
-                {
-                    Id = r.Id,
-                    UserId = r.UserId,
-                    Title = r.Title,
-                    Description = r.Description,
-                    IsPublished = r.IsPublished,
-                    CreatedAt = r.CreatedAt,
-                    Media = r.Media
-                })
                 .ToListAsync();
+
+            // Отримуємо імена авторів паралельно
+            var recipeDtos = await Task.WhenAll(recipes.Select(async r => new RecipeDto
+            {
+                Id = r.Id,
+                UserId = r.UserId,
+                AuthorName = await GetAuthorNameAsync(r.UserId),
+                Title = r.Title,
+                Description = r.Description,
+                IsPublished = r.IsPublished,
+                CreatedAt = r.CreatedAt,
+                Media = r.Media
+            }));
 
             return new PagedResult<RecipeDto>
             {
-                Items = recipes,
+                Items = recipeDtos.ToList(),
                 Page = page,
                 PageSize = pageSize,
                 TotalCount = total
@@ -67,10 +99,13 @@ namespace RecipeService.Services
 
             if (recipe == null) return null;
 
+            var authorName = await GetAuthorNameAsync(recipe.UserId);
+
             return new RecipeDetailsDto
             {
                 Id = recipe.Id,
                 UserId = recipe.UserId,
+                AuthorName = authorName,
                 Title = recipe.Title,
                 Description = recipe.Description,
                 Instructions = recipe.Instructions,

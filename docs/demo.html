@@ -19,23 +19,18 @@
     button.success { background: #1a5c1a; }
     button.success:hover { background: #236b23; }
     .result {
-      background: #252526; border: 1px solid #3e3e42;
+      background: #1a1a1a; border: 1px solid #3e3e42;
       border-radius: 6px; padding: 16px; margin-top: 12px;
       white-space: pre-wrap; min-height: 48px; font-size: 13px;
     }
-    .status-ok { color: #4ec9b0; }
-    .status-err { color: #f44747; }
+    .status-ok { color: #4ec9b0; font-weight: bold; }
+    .status-err { color: #f44747; font-weight: bold; }
     input, select {
       background: #3c3c3c; border: 1px solid #555; color: #d4d4d4;
       padding: 8px 12px; border-radius: 4px; font-family: monospace;
       width: 300px; margin: 4px;
     }
     label { color: #9cdcfe; display: block; margin-top: 8px; }
-    .token-box {
-      background: #1a1a2e; border: 1px solid #4ec9b0;
-      border-radius: 6px; padding: 12px; margin: 12px 0;
-      font-size: 11px; word-break: break-all;
-    }
     .section { background: #252526; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
     .badge {
       display: inline-block; padding: 2px 8px; border-radius: 4px;
@@ -45,6 +40,44 @@
     .badge-post { background: #1a5c1a; }
     .badge-patch { background: #5c3d1a; }
     .badge-delete { background: #5c1a1a; }
+
+    /* Токен панель */
+    .token-panel {
+      background: #1a1a2e;
+      border: 2px solid #4ec9b0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .token-panel h2 { margin-top: 0; color: #4ec9b0; border: none; }
+    .token-status {
+      font-size: 12px;
+      margin-top: 8px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      word-break: break-all;
+    }
+    .token-status.has-token { background: #1a3a1a; color: #4ec9b0; }
+    .token-status.no-token { background: #3a1a1a; color: #f44747; }
+    .health-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .health-item { text-align: center; }
+    .health-item button { width: 100%; font-size: 12px; padding: 8px; }
+    .health-result {
+      margin-top: 6px;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      min-height: 24px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+    }
   </style>
 </head>
 <body>
@@ -52,25 +85,62 @@
 <h1>🍳 ChefFlow Gateway Demo</h1>
 <p>Всі запити йдуть через шлюз <strong>http://localhost:5000</strong></p>
 
-<div class="token-box" id="token-display">
-  🔑 Токен: <span id="token-value">не отримано</span>
+<!-- ТОКЕН ПАНЕЛЬ -->
+<div class="token-panel">
+  <h2>🔑 Авторизація</h2>
+  <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+    <div>
+      <label>Email:</label>
+      <input type="email" id="login-email" value="admin@chefflow.com" style="width:220px"/>
+    </div>
+    <div>
+      <label>Пароль:</label>
+      <input type="password" id="login-password" value="Admin123!" style="width:160px"/>
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button class="success" onclick="login()">🔐 Увійти та отримати токен</button>
+      <button class="danger" onclick="clearToken()">🚪 Очистити токен</button>
+    </div>
+  </div>
+  <div class="token-status no-token" id="token-status">
+    ❌ Токен не отримано — увійдіть щоб виконувати захищені запити
+  </div>
+  <div class="result" id="result-login" style="margin-top:8px; display:none;"></div>
 </div>
 
 <!-- HEALTH -->
 <div class="section">
   <h2>🏥 Health Checks</h2>
-  <button onclick="checkHealth('http://localhost:5000/health', 'result-health-gateway')">
-    GET /health (шлюз)
-  </button>
-  <button onclick="checkHealth('http://localhost:5001/health', 'result-health-auth')">
-    GET /health (AuthService)
-  </button>
-  <button onclick="checkHealth('http://localhost:5002/health', 'result-health-recipe')">
-    GET /health (RecipeService)
-  </button>
-  <div class="result" id="result-health-gateway">Натисни кнопку...</div>
-  <div class="result" id="result-health-auth">Натисни кнопку...</div>
-  <div class="result" id="result-health-recipe">Натисни кнопку...</div>
+  <div class="health-grid">
+    <div class="health-item">
+      <button onclick="checkHealth('http://localhost:5000/health', 'h-gateway')">
+        🛡️ Gateway :5000
+      </button>
+      <div class="health-result" id="h-gateway">—</div>
+    </div>
+    <div class="health-item">
+      <button onclick="checkHealth('http://localhost:5001/health', 'h-auth')">
+        🔐 AuthService :5001
+      </button>
+      <div class="health-result" id="h-auth">—</div>
+    </div>
+    <div class="health-item">
+      <button onclick="checkHealth('http://localhost:5002/health', 'h-recipe')">
+        🍽️ RecipeService :5002
+      </button>
+      <div class="health-result" id="h-recipe">—</div>
+    </div>
+    <div class="health-item">
+      <button onclick="checkHealth('http://localhost:5003/health', 'h-task')">
+        📋 TaskService :5003
+      </button>
+      <div class="health-result" id="h-task">—</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;">
+    <button onclick="checkAllHealth()">✅ Перевірити всі одразу</button>
+  </div>
 </div>
 
 <!-- AUTH -->
@@ -81,25 +151,22 @@
   <label>Ім'я:</label>
   <input type="text" id="reg-name" value="Тест Користувач"/>
   <label>Email:</label>
-  <input type="email" id="reg-email" value="test@test.com"/>
+  <input type="email" id="reg-email" value="newuser@test.com"/>
   <label>Пароль:</label>
-  <input type="password" id="reg-password" value="123456"/>
+  <input type="password" id="reg-password" value="Password123!"/>
   <br/>
   <button class="success" onclick="register()">POST /api/v1/auth/register</button>
   <div class="result" id="result-register">Натисни кнопку...</div>
 
-  <h3>Вхід <span class="badge badge-post">POST</span></h3>
-  <label>Email:</label>
-  <input type="email" id="login-email" value="admin@chefflow.com"/>
-  <label>Пароль:</label>
-  <input type="password" id="login-password" value="Admin123!"/>
-  <br/>
-  <button class="success" onclick="login()">POST /api/v1/auth/login</button>
-  <div class="result" id="result-login">Натисни кнопку...</div>
-
-  <h3>Профіль <span class="badge badge-get">GET</span></h3>
+  <h3>Профіль поточного користувача <span class="badge badge-get">GET</span></h3>
   <button onclick="getMe()">GET /api/v1/users/me</button>
+  <small style="color:#666; margin-left:8px;">потрібен токен</small>
   <div class="result" id="result-me">Натисни кнопку...</div>
+
+  <h3>Список користувачів (тільки Admin) <span class="badge badge-get">GET</span></h3>
+  <button onclick="getUsers()">GET /api/v1/users</button>
+  <small style="color:#666; margin-left:8px;">потрібен токен Admin</small>
+  <div class="result" id="result-users">Натисни кнопку...</div>
 </div>
 
 <!-- RECIPE -->
@@ -108,15 +175,17 @@
 
   <h3>Список рецептів <span class="badge badge-get">GET</span></h3>
   <button onclick="getRecipes()">GET /api/v1/recipe</button>
+  <small style="color:#666; margin-left:8px;">публічний</small>
   <div class="result" id="result-recipes">Натисни кнопку...</div>
 
   <h3>Створити рецепт <span class="badge badge-post">POST</span></h3>
   <label>Назва:</label>
   <input type="text" id="recipe-title" value="Вівсяна каша з бананом"/>
   <label>Опис:</label>
-  <input type="text" id="recipe-desc" value="Швидкий сніданок"/>
+  <input type="text" id="recipe-desc" value="Швидкий та корисний сніданок"/>
   <br/>
   <button class="success" onclick="createRecipe()">POST /api/v1/recipe</button>
+  <small style="color:#666; margin-left:8px;">потрібен токен</small>
   <div class="result" id="result-create-recipe">Натисни кнопку...</div>
 
   <h3>Деталі рецепту <span class="badge badge-get">GET</span></h3>
@@ -125,18 +194,59 @@
   <button onclick="getRecipeById()">GET /api/v1/recipe/{id}</button>
   <div class="result" id="result-recipe-detail">Натисни кнопку...</div>
 
-  <h3>Опублікувати <span class="badge badge-patch">PATCH</span></h3>
+  <h3>Опублікувати рецепт <span class="badge badge-patch">PATCH</span></h3>
   <label>ID рецепту:</label>
   <input type="number" id="publish-id" value="1"/>
   <button onclick="publishRecipe()">PATCH /api/v1/recipe/{id}/publish</button>
+  <small style="color:#666; margin-left:8px;">потрібен токен</small>
   <div class="result" id="result-publish">Натисни кнопку...</div>
+</div>
+
+<!-- TASKS -->
+<div class="section">
+  <h2>📋 TaskService <span class="badge badge-get">:5003</span></h2>
+
+  <h3>Всі завдання <span class="badge badge-get">GET</span></h3>
+  <button onclick="getTasks()">GET /api/v1/tasks</button>
+  <small style="color:#666; margin-left:8px;">потрібен токен</small>
+  <div class="result" id="result-tasks">Натисни кнопку...</div>
+
+  <h3>Створити завдання <span class="badge badge-post">POST</span></h3>
+  <label>Назва:</label>
+  <input type="text" id="task-title" value="Замаринувати курку"/>
+  <label>Опис:</label>
+  <input type="text" id="task-desc" value="Підготувати до барбекю на вихідних"/>
+  <label>Пріоритет:</label>
+  <select id="task-priority">
+    <option>Високий</option>
+    <option>Середній</option>
+    <option>Низький</option>
+  </select>
+  <br/>
+  <button class="success" onclick="createTask()">POST /api/v1/tasks</button>
+  <small style="color:#666; margin-left:8px;">потрібен токен</small>
+  <div class="result" id="result-create-task">Натисни кнопку...</div>
+
+  <h3>Пошук завдань <span class="badge badge-get">GET</span></h3>
+  <label>Пошуковий запит:</label>
+  <input type="text" id="task-search" value="курка"/>
+  <button onclick="searchTasks()">GET /api/v1/tasks/search</button>
+  <small style="color:#666; margin-left:8px;">потрібен токен</small>
+  <div class="result" id="result-search-task">Натисни кнопку...</div>
+
+  <h3>Видалити завдання <span class="badge badge-delete">DELETE</span></h3>
+  <label>ID завдання:</label>
+  <input type="number" id="task-delete-id" value="1"/>
+  <button class="danger" onclick="deleteTask()">DELETE /api/v1/tasks/{id}</button>
+  <small style="color:#666; margin-left:8px;">потрібен токен</small>
+  <div class="result" id="result-delete-task">Натисни кнопку...</div>
 </div>
 
 <!-- МОНОЛІТ -->
 <div class="section">
   <h2>🏛️ Моноліт <span class="badge badge-get">:5208</span></h2>
   <h3>Старий маршрут рецептів <span class="badge badge-get">GET</span></h3>
-  <button onclick="getMonolithRecipes()">GET /api/Recipe (моноліт)</button>
+  <button onclick="getMonolithRecipes()">GET /api/Recipe (через перехоплювач)</button>
   <div class="result" id="result-monolith">Натисни кнопку...</div>
 </div>
 
@@ -145,42 +255,61 @@ const BASE = 'http://localhost:5000';
 let accessToken = '';
 let refreshToken = '';
 
-function show(id, status, data) {
-    const el = document.getElementById(id);
-    const isOk = status >= 200 && status < 300;
-    el.innerHTML = `<span class="${isOk ? 'status-ok' : 'status-err'}">Status: ${status}</span>\n\n${JSON.stringify(data, null, 2)}`;
-}
-
-function updateTokenDisplay() {
-    document.getElementById('token-value').textContent =
-        accessToken ? accessToken.substring(0, 50) + '...' : 'не отримано';
-}
-
-async function checkHealth(url, resultId) {
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        show(resultId, res.status, data);
-    } catch (e) {
-        document.getElementById(resultId).innerHTML =
-            `<span class="status-err">Сервіс недоступний: ${e.message}</span>`;
+// ── ТОКЕН ──
+function updateTokenStatus() {
+    const el = document.getElementById('token-status');
+    if (accessToken) {
+        el.className = 'token-status has-token';
+        el.textContent = '✅ Токен отримано: ' + accessToken.substring(0, 60) + '...';
+    } else {
+        el.className = 'token-status no-token';
+        el.textContent = '❌ Токен не отримано — увійдіть щоб виконувати захищені запити';
     }
 }
 
-async function register() {
-    const res = await fetch(`${BASE}/api/v1/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            name: document.getElementById('reg-name').value,
-            email: document.getElementById('reg-email').value,
-            password: document.getElementById('reg-password').value
-        })
-    });
-    const data = await res.json();
-    show('result-register', res.status, data);
+function clearToken() {
+    accessToken = '';
+    refreshToken = '';
+    updateTokenStatus();
 }
 
+function authHeader() {
+    return accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {};
+}
+
+function show(id, status, data) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = 'block';
+    const isOk = status >= 200 && status < 300;
+    el.innerHTML = `<span class="${isOk ? 'status-ok' : 'status-err'}">● Status: ${status}</span>\n\n${JSON.stringify(data, null, 2)}`;
+}
+
+// ── HEALTH ──
+async function checkHealth(url, resultId) {
+    const el = document.getElementById(resultId);
+    el.textContent = '⏳ перевіряємо...';
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        el.style.color = res.ok ? '#4ec9b0' : '#f44747';
+        el.textContent = (res.ok ? '✅ ' : '❌ ') + data.status + ' — ' + (data.database || '');
+    } catch (e) {
+        el.style.color = '#f44747';
+        el.textContent = '❌ Недоступний';
+    }
+}
+
+async function checkAllHealth() {
+    await Promise.all([
+        checkHealth('http://localhost:5000/health', 'h-gateway'),
+        checkHealth('http://localhost:5001/health', 'h-auth'),
+        checkHealth('http://localhost:5002/health', 'h-recipe'),
+        checkHealth('http://localhost:5003/health', 'h-task'),
+    ]);
+}
+
+// ── AUTH ──
 async function login() {
     const res = await fetch(`${BASE}/api/v1/auth/login`, {
         method: 'POST',
@@ -194,19 +323,47 @@ async function login() {
     if (data.accessToken) {
         accessToken = data.accessToken;
         refreshToken = data.refreshToken;
-        updateTokenDisplay();
+        updateTokenStatus();
     }
     show('result-login', res.status, data);
 }
 
+async function register() {
+    const res = await fetch(`${BASE}/api/v1/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: document.getElementById('reg-name').value,
+            email: document.getElementById('reg-email').value,
+            password: document.getElementById('reg-password').value
+        })
+    });
+    const data = await res.json();
+    if (data.accessToken) {
+        accessToken = data.accessToken;
+        refreshToken = data.refreshToken;
+        updateTokenStatus();
+    }
+    show('result-register', res.status, data);
+}
+
 async function getMe() {
     const res = await fetch(`${BASE}/api/v1/users/me`, {
-        headers: { 'Authorization': `Bearer ${accessToken}` }
+        headers: authHeader()
     });
     const data = await res.json();
     show('result-me', res.status, data);
 }
 
+async function getUsers() {
+    const res = await fetch(`${BASE}/api/v1/users`, {
+        headers: authHeader()
+    });
+    const data = await res.json();
+    show('result-users', res.status, data);
+}
+
+// ── RECIPE ──
 async function getRecipes() {
     const res = await fetch(`${BASE}/api/v1/recipe`);
     const data = await res.json();
@@ -216,18 +373,16 @@ async function getRecipes() {
 async function createRecipe() {
     const res = await fetch(`${BASE}/api/v1/recipe`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-        },
+        headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({
             title: document.getElementById('recipe-title').value,
             description: document.getElementById('recipe-desc').value,
-            instructions: 'Залити овес молоком, варити 5 хвилин',
+            instructions: 'Залити овес молоком, варити 5 хвилин, додати банан і мед',
             isPublished: true,
             ingredients: [
                 { productName: 'овес', quantity: 80, unit: 'г' },
-                { productName: 'молоко', quantity: 250, unit: 'мл' }
+                { productName: 'молоко', quantity: 250, unit: 'мл' },
+                { productName: 'банан', quantity: 1, unit: 'шт' }
             ]
         })
     });
@@ -246,16 +401,64 @@ async function publishRecipe() {
     const id = document.getElementById('publish-id').value;
     const res = await fetch(`${BASE}/api/v1/recipe/${id}/publish`, {
         method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${accessToken}` }
+        headers: authHeader()
     });
-    show('result-publish', res.status, res.status === 204 ? { message: 'Опубліковано' } : {});
+    show('result-publish', res.status,
+        res.status === 204 ? { message: '✅ Рецепт опубліковано' } : await res.json());
 }
 
+// ── TASKS ──
+async function getTasks() {
+    const res = await fetch(`${BASE}/api/v1/tasks`, {
+        headers: authHeader()
+    });
+    const data = await res.json();
+    show('result-tasks', res.status, data);
+}
+
+async function createTask() {
+    const res = await fetch(`${BASE}/api/v1/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeader() },
+        body: JSON.stringify({
+            title: document.getElementById('task-title').value,
+            description: document.getElementById('task-desc').value,
+            priority: document.getElementById('task-priority').value,
+            deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        })
+    });
+    const data = await res.json();
+    show('result-create-task', res.status, data);
+}
+
+async function searchTasks() {
+    const q = document.getElementById('task-search').value;
+    const res = await fetch(`${BASE}/api/v1/tasks/search?q=${encodeURIComponent(q)}`, {
+        headers: authHeader()
+    });
+    const data = await res.json();
+    show('result-search-task', res.status, data);
+}
+
+async function deleteTask() {
+    const id = document.getElementById('task-delete-id').value;
+    const res = await fetch(`${BASE}/api/v1/tasks/${id}`, {
+        method: 'DELETE',
+        headers: authHeader()
+    });
+    show('result-delete-task', res.status,
+        res.status === 204 ? { message: '✅ Завдання видалено' } : await res.json());
+}
+
+// ── МОНОЛІТ ──
 async function getMonolithRecipes() {
     const res = await fetch(`${BASE}/api/Recipe`);
     const data = await res.json();
     show('result-monolith', res.status, data);
 }
+
+// Автоматична перевірка health при завантаженні
+window.addEventListener('load', checkAllHealth);
 </script>
 
 </body>

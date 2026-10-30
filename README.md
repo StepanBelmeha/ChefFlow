@@ -47,12 +47,55 @@ dotnet run --launch-profile http
 
 Шлюз доступний на `http://localhost:5000`
 
+### 4. Запуск TaskService
+
+Відкрий ще один термінал:
+
+```bash
+cd src/TaskService
+dotnet run --launch-profile http
+```
+
+TaskService доступний на `http://localhost:5003`. Шлюз пересилає запити до
+`/api/v1/tasks/**` на цей сервіс. TaskService потрібно запустити окремо від шлюзу.
+
+### AuthService і RecipeService
+
+Запусти AuthService, а потім RecipeService в окремих терміналах:
+
+```bash
+cd src/AuthService
+dotnet run --launch-profile http
+```
+
+```bash
+cd src/RecipeService
+dotnet run --launch-profile http
+```
+
+У Development AuthService слухає HTTP на `localhost:5001` і внутрішній gRPC на
+`localhost:5005`. RecipeService отримує ім'я автора через gRPC; HTTP-маршрут
+`GET /api/v1/users/{userId}` для цього більше не використовується і видалений.
+Gateway маршрутизує лише `GET /api/v1/users/me` та `GET /api/v1/users`.
+
+Для локальної розробки обидва сервіси використовують ключ із
+`appsettings.Development.json`. Це лише тестовий ключ: у розгортанні задай
+однакове значення `Services__InternalApiKey` для обох сервісів, налаштуй
+`Services__AuthGrpc` на HTTPS-адресу AuthService та опублікуй gRPC-порт лише у
+приватній мережі. Для AuthService задай `Kestrel__Endpoints__Grpc__Url` з
+HTTPS-адресою та `Kestrel__Endpoints__Grpc__Protocols=Http2`. Ключ має містити
+щонайменше 32 байти. Не використовуй локальний ключ у Production.
+
 ## Порти
 
 | Сервіс | Порт |
 |--------|------|
 | API Gateway (Ocelot) | 5000 |
+| AuthService (HTTP) | 5001 |
+| AuthService (gRPC, внутрішній) | 5005 |
+| RecipeService | 5002 |
 | ChefFlow Моноліт | 5208 |
+| TaskService | 5003 |
 | MySQL | 3306 |
 
 ## Маршрути шлюзу

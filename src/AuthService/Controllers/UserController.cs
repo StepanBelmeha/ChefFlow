@@ -73,5 +73,6 @@ namespace AuthService.Controllers
                 totalCount = total
             });
         }
+
     }
 }

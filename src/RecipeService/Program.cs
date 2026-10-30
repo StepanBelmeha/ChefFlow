@@ -1,4 +1,7 @@
 using System.Text;
+using ChefFlow.Contracts.Users;
+using Grpc.Core;
+using Grpc.Net.ClientFactory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +9,27 @@ using Microsoft.OpenApi.Models;
 using RecipeService.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var internalApiKey = builder.Configuration["Services:InternalApiKey"];
+if (string.IsNullOrWhiteSpace(internalApiKey)
+    || Encoding.UTF8.GetByteCount(internalApiKey) < 32)
+{
+    throw new InvalidOperationException(
+        "Services:InternalApiKey must be configured with at least 32 bytes.");
+}
+
+var authGrpcAddress = new Uri(
+    builder.Configuration["Services:AuthGrpc"]
+    ?? throw new InvalidOperationException("Services:AuthGrpc must be configured."));
+
+if (!builder.Environment.IsDevelopment()
+    && authGrpcAddress.Scheme != Uri.UriSchemeHttps)
+{
+    throw new InvalidOperationException("Services:AuthGrpc must use HTTPS outside Development.");
+}
+
+if (builder.Environment.IsDevelopment() && authGrpcAddress.Scheme == Uri.UriSchemeHttp)
+    AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
 // DB
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -65,6 +89,18 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+builder.Services
+    .AddGrpcClient<UserDirectory.UserDirectoryClient>(options =>
+        options.Address = authGrpcAddress)
+    .ConfigureChannel(options =>
+        options.UnsafeUseInsecureChannelCallCredentials =
+            builder.Environment.IsDevelopment()
+            && authGrpcAddress.Scheme == Uri.UriSchemeHttp)
+    .AddCallCredentials((_, metadata, _) =>
+    {
+        metadata.Add("x-internal-api-key", internalApiKey);
+        return Task.CompletedTask;
+    });
 
 var app = builder.Build();
 
@@ -96,3 +132,5 @@ app.MapGet("/health", async (RecipeDbContext db) =>
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
